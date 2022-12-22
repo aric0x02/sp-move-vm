@@ -29,15 +29,15 @@ lockfile_waithold
 
 set -e
 dove build
-dove tx "store_u64(13)"
-dove tx "tx_test<0x01::Pontem::T>(100)"
-dove build -b -o "valid_pack"  --modules_exclude "ReflectTest"
-dove build -b -o "invalid_pack" --modules_exclude "Store" "ReflectTest"
+dove call "store_u64(13)"
+dove call "tx_test<0x01::Pontem::T>(100)"
+dove deploy   --modules_exclude "ReflectTest"
+dove deploy  --modules_exclude "Store" "ReflectTest"
 
-dove tx "rt_signers(rt)"
-dove tx "signers_tr_with_user(root)"
-dove tx "Assets::ScriptBook::test"
-dove tx "signer_order"
+dove call "rt_signers(rt)"
+dove call "signers_tr_with_user(root)"
+dove call "Assets::ScriptBook::test"
+dove call "signer_order"
 
 lockfile_release
 
