@@ -11,10 +11,10 @@ edition = "2018"
 
 [dependencies]
 mirai-annotations = { path = "../../../mirai-annotations", default-features = false }
-cell = { path = "../../../common/cell", default-features = false }
+cell = { path = "../../../crates/cell", default-features = false }
 proptest = { version = "1.0.0", optional = true }
-sha2 = { version = "0.9.2", default-features = false }
-serde = { version = "1", default-features = false, package = "alt_serde", features = ["derive", "alloc"] }
+sha2 = { version = "0.9.3", default-features = false }
+serde = { version = "1.0.119", default-features = false, package = "alt_serde", features = ["derive", "alloc"] }
 smallvec = "1.7.0"
 hashbrown = "0.9"
 bcs = { path = "../../../bcs", default-features = false }

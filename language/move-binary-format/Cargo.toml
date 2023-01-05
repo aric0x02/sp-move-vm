@@ -12,7 +12,7 @@ edition = "2018"
 [dependencies]
 hashbrown = "0.9"
 anyhow = { version = "1.0.38", default-features = false }
-cell = { path = "../../common/cell", default-features = false }
+cell = { path = "../../crates/cell", default-features = false }
 mirai-annotations = { path = "../../mirai-annotations", default-features = false }
 proptest = { version = "1.0.0", optional = true }
 proptest-derive = { version = "0.3.0", optional = true }
@@ -23,7 +23,7 @@ move-core-types = { path = "../move-core/types", default-features = false }
 [dev-dependencies]
 proptest = "1.0.0"
 proptest-derive = "0.3.0"
-diem-proptest-helpers = { path = "../../common/proptest-helpers", version = "0.1.0" }
+diem-proptest-helpers = { path = "../../crates/diem-proptest-helpers", version = "0.1.0" }
 move-core-types = { path = "../move-core/types", features = ["fuzzing"] }
 serde_json = { version = "1.0.61", package = "alt_serde_json", default-features = false }
 

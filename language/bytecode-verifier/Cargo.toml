@@ -11,7 +11,7 @@ edition = "2018"
 
 [dependencies]
 hashbrown = "0.9"
-anyhow = {version ="1.0.34", default-features = false}
+anyhow = {version ="1.0.38", default-features = false}
 mirai-annotations = { path = "../../mirai-annotations", default-features = false }
 petgraph = { git = "https://github.com/pontem-network/petgraph.git", package = "petgraph_core", rev = "b8e795dd9d7bb1143a7ac6bbe745e420e9caf500", default-features = false, features = ["graphmap", "stable_graph", "matrix_graph"]}
 

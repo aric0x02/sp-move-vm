@@ -1,9 +1,9 @@
 [workspace]
 members = [
-    "common/short-hex-str",
-    "common/cell",
-    "crypto/crypto",
-    "crypto/crypto-derive",
+    "crates/short-hex-str",
+    "crates/cell",
+    "crates/diem-crypto",
+    "crates/diem-crypto-derive",
     "language/borrow-graph",
     "language/bytecode-verifier",
     "language/bytecode-verifier/invalid-mutations",
@@ -18,9 +18,9 @@ members = [
     "mvm",
     "bcs",
     "mirai-annotations",
-    "common/nibble",
-    "common/proptest-helpers",
-    "common/fallible",
+    "crates/nibble",
+    "crates/diem-proptest-helpers",
+    "crates/fallible",
     "stdlib",
     "types"
 ]

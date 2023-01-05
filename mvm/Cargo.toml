@@ -11,15 +11,15 @@ edition = "2018"
 hashbrown = "0.9"
 anyhow = { version = "1.0.34", default-features = false }
 hex = { version = "0.4.2", default-features = false, features = ["alloc"] }
-serde = { version = "1", default-features = false, package = "alt_serde", features = ["derive", "alloc"] }
+serde = { version = "1.0.119", default-features = false, package = "alt_serde", features = ["derive", "alloc"] }
 parity-scale-codec = { version = "2", default-features = false }
 parity-scale-codec-derive = { version = "2", default-features = false }
-cell = { path = "../common/cell", default-features = false }
+cell = { path = "../crates/cell", default-features = false }
 move-vm-runtime = { path = "../language/move-vm/runtime", default-features = false }
 move-vm-types = { path = "../language/move-vm/types", default-features = false }
 move-core-types = { path = "../language/move-core/types", default-features = false }
 move-binary-format = { path = "../language/move-binary-format", default-features = false }
-diem-crypto = { path = "../crypto/crypto", default-features = false }
+diem-crypto = { path = "../crates/diem-crypto", default-features = false }
 bcs = { path = "../bcs", default-features = false }
 stdlib = { path = "../stdlib", default-features = false, optional = true }
 log = { version = "0.4.14", default-features = false }

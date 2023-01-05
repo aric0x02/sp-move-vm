@@ -10,16 +10,16 @@ publish = false
 edition = "2018"
 
 [dependencies]
-anyhow = { version = "1.0.34", default-features = false }
+anyhow = { version = "1.0.38", default-features = false }
 bcs = { path = "../../../bcs", default-features = false }
-hex = { version = "0.4.2", default-features = false, features = ["alloc"] }
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
 mirai-annotations = { path = "../../../mirai-annotations", default-features = false }
-cell = { path = "../../../common/cell", default-features = false }
+cell = { path = "../../../crates/cell", default-features = false }
 proptest = { version = "1.0.0", default-features = false, optional = true }
 proptest-derive = { version = "0.3.0", default-features = false, optional = true }
-rand = { version = "0.7.3", default-features = false, optional = true }
-ref-cast = "1.0.3"
-serde = { version = "1", default-features = false, package = "alt_serde", features = ["derive", "alloc"] }
+rand = { version = "0.8.3", default-features = false, optional = true }
+ref-cast = "1.0.6"
+serde = { version = "1.0.119", default-features = false, package = "alt_serde", features = ["derive", "alloc"] }
 enum-iterator = "0.6.0"
 parity-scale-codec = { version = "2.3.0", default-features = false }
 parity-scale-codec-derive = { version = "2.3.0", default-features = false }
@@ -27,7 +27,7 @@ parity-scale-codec-derive = { version = "2.3.0", default-features = false }
 [dev-dependencies]
 proptest = "1.0.0"
 proptest-derive = "0.3.0"
-regex = "1.4.2"
+regex = "1.5.5"
 serde_json = { version = "1.0.61", package = "alt_serde_json" }
 
 [features]
