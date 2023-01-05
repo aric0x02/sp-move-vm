@@ -1,0 +1,23 @@
+[package]
+name = "short-hex-str"
+version = "0.1.0"
+authors = ["Diem Association <opensource@diem.com>"]
+description = "Diem implementation for retries of operations"
+repository = "https://github.com/diem/diem"
+homepage = "https://diem.com"
+license = "Apache-2.0"
+publish = false
+edition = "2018"
+
+[dependencies]
+mirai-annotations = { path = "../../mirai-annotations" }
+serde = { version = "1.0.119", default-features = false, package = "alt_serde", features = ["derive"] }
+
+[dev-dependencies]
+proptest = "1.0.0"
+hex = "0.4.3"
+
+[features]
+default = ["std"]
+std = [
+]
