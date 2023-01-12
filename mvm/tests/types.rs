@@ -136,7 +136,7 @@ fn test_transaction_invalid_signer() {
 #[test]
 fn test_parse_pac() {
     let pac =
-        ModulePackage::try_from(&include_bytes!("assets/build/assets/bundles/assets.pac")[..])
+        ModulePackage::try_from(&include_bytes!("assets/build/assets/bundles/valid_pack.pac")[..])
             .unwrap();
     let tx = pac.into_tx(CORE_CODE_ADDRESS);
     let (modules, address) = tx.into_inner();
