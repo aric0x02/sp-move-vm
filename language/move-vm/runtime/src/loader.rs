@@ -752,7 +752,7 @@ impl Loader {
                     )
                     .ok_or_else(|| {
                         verification_error(
-                            StatusCode::MISSING_DEPENDENCY,
+                            StatusCode::UNKNOWN_NATIVE_STRUCT_FLAG,
                             IndexKind::FunctionHandle,
                             idx as TableIndex,
                         )
@@ -763,7 +763,7 @@ impl Loader {
             for (idx, struct_def) in module.struct_defs().iter().enumerate() {
                 if struct_def.field_information == StructFieldInformation::Native {
                     return Err(verification_error(
-                        StatusCode::MISSING_DEPENDENCY,
+                        StatusCode::UNKNOWN_NATIVE_STRUCT_FLAG,
                         IndexKind::FunctionHandle,
                         idx as TableIndex,
                     ));
