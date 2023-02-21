@@ -3,7 +3,7 @@
  function lockfile_waithold()
  {
     declare -ir time_beg=$(date '+%s')
-    declare -ir time_max=1  # 7140 s = 1 hour 59 min.
+    declare -ir time_max=7 # 7140 s = 1 hour 59 min.
 
     while ! \
        (set -o noclobber ; \
@@ -41,6 +41,7 @@ mv  ./build/assets/bundles/assets_old.pac ./build/assets/bundles/assets.pac
 dove call "rt_signers(rt)"
 dove call "signers_tr_with_user(root)"
 dove call "Assets::ScriptBook::test"
+dove call "TestAddr::ScriptBook2::test2(2,3)"
 dove call "signer_order"
 
 lockfile_release

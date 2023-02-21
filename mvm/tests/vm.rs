@@ -58,6 +58,21 @@ fn test_run_module_function() {
 }
 
 #[test]
+fn test_run_module_function2() {
+    let tx = Transaction::try_from(
+        &include_bytes!("assets/build/assets/transaction/ScriptBook2_test2.mvt")[..],
+    )
+    .unwrap();
+    let script = tx.into_script(vec![]).unwrap();
+    let (vm, _, _, _) = vm();
+    vm.pub_mod(script_book_module2());
+    let status = vm
+        .execute_script(gas(), ExecutionContext::new(0, 0), script, false)
+        .status_code;
+    assert_eq!(status, StatusCode::EXECUTED);
+}
+
+#[test]
 fn test_public_module_without_gas() {
     let (vm, _, _, _) = vm();
     let gas = Gas::new(1, 1).unwrap();

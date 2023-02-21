@@ -62,7 +62,29 @@ fn test_module_function() {
         }
     };
 }
-
+#[test]
+fn test_module_function2() {
+    let tx = Transaction::try_from(
+        &include_bytes!("assets/build/assets/transaction/ScriptBook2_test2.mvt")[..],
+    )
+    .unwrap();
+    assert_eq!(tx.signers_count(), 0);
+    assert!(!tx.has_root_signer());
+    let script = tx.into_script(vec![]).unwrap();
+    match script.call() {
+        Call::Script { .. } => unreachable!(),
+        Call::ScriptFunction {
+            mod_address,
+            mod_name,
+            func_name,
+        } => {
+            assert_eq!(*mod_address,  AccountAddress::from_hex_literal("0x13")
+        .expect("Parsing valid hex literal should always succeed"));
+            assert_eq!(mod_name.as_str(), "ScriptBook2");
+            assert_eq!(func_name.as_str(), "test2");
+        }
+    };
+}
 #[test]
 fn test_transaction_with_sys_signers() {
     let tx = Transaction::try_from(
