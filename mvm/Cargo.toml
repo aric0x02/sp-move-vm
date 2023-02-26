@@ -28,7 +28,7 @@ move-stdlib = { path = "../language/move-stdlib", default-features = false }
 
 [dependencies.sp-io]
 git = "https://github.com/paritytech/substrate"
-branch = "polkadot-v0.9.18"
+branch = "polkadot-v0.9.37"
 default-features = false
 optional = true
 
@@ -41,6 +41,7 @@ move_stdlib = [
 ]
 std = [
     "anyhow/std",
+"sp-io/std",
     "move-binary-format/std",
     "move-core-types/std",
     "move-vm-types/std",
@@ -48,7 +49,6 @@ std = [
     "parity-scale-codec/std",
     "log/std",
     "cell/std",
-    "sp-io/std"
 ]
 testing = [
     "move-stdlib/testing"
