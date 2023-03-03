@@ -15,6 +15,7 @@ members = [
     "language/move-vm/runtime",
     "language/move-vm/types",
     "language/move-vm/test-utils",
+    "language/tools/move-resource-viewer",
     "mvm",
     "bcs",
     "mirai-annotations",
