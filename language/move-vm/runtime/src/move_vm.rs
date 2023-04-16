@@ -1,7 +1,7 @@
 // Copyright (c) The Diem Core Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{native_functions::NativeFunction, runtime::VMRuntime, session::Session};
+use crate::{native_functions::{NativeContextExtensions,NativeFunction}, runtime::VMRuntime, session::Session};
 use move_binary_format::errors::{Location, VMResult};
 use move_core_types::{
     account_address::AccountAddress, identifier::Identifier, resolver::MoveResolver,
@@ -39,6 +39,14 @@ impl MoveVM {
         self.runtime.new_session(remote)
     }
 
+    /// Create a new session, as in `new_session`, but provide native context extensions.
+    pub fn new_session_with_extensions<'r, S: MoveResolver>(
+        &self,
+        remote: &'r S,
+        extensions: NativeContextExtensions<'r>,
+    ) -> Session<'r, '_, S> {
+        self.runtime.new_session_with_extensions(remote, extensions)
+    }
     /// Clears vm state.
     pub fn clear(&self) {
         self.runtime.clear();

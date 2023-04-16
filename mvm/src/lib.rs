@@ -15,6 +15,7 @@ use alloc::vec::Vec;
 use anyhow::Error;
 use diem_types::account_address::AccountAddress;
 
+
 pub mod abi;
 pub mod error;
 pub mod gas_schedule;
@@ -22,7 +23,6 @@ pub mod genesis;
 pub mod io;
 pub mod mvm;
 pub mod types;
-
 pub trait Vm {
     /// Publishes module to the chain.
     fn publish_module(&self, gas: Gas, module: ModuleTx, dry_run: bool) -> VmResult;

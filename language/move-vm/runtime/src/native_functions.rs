@@ -1,11 +1,14 @@
 // Copyright (c) The Diem Core Contributors
+// Copyright (c) The Move Contributors
 // SPDX-License-Identifier: Apache-2.0
 
+use better_any::{Tid, TidAble, TidExt};
 use crate::{interpreter::Interpreter, loader::Resolver};
 use alloc::collections::VecDeque;
 use alloc::string::String;
 use alloc::vec::Vec;
 use hashbrown::HashMap;
+use alloc::boxed::Box;
 use move_binary_format::errors::{PartialVMError, PartialVMResult};
 use move_core_types::language_storage::TypeTag;
 use move_core_types::{
@@ -19,12 +22,30 @@ use move_vm_types::{
     data_store::DataStore, gas_schedule::GasStatus, loaded_data::runtime_types::Type,
     natives::function::NativeResult, values::Value,
 };
-
+    use core::any::{Any, TypeId};
+pub use crate::native_extensions::NativeContextExtensions;
 pub type NativeFunction =
     fn(&mut NativeContext, Vec<Type>, VecDeque<Value>) -> PartialVMResult<NativeResult>;
 
 pub type NativeFunctionTable = Vec<(AccountAddress, Identifier, Identifier, NativeFunction)>;
 
+pub fn make_table(
+    addr: AccountAddress,
+    elems: &[(&str, &str, NativeFunction)],
+) -> NativeFunctionTable {
+    elems
+        .iter()
+        .cloned()
+        .map(|(module_name, func_name, func)| {
+            (
+                addr,
+                Identifier::new(module_name).unwrap(),
+                Identifier::new(func_name).unwrap(),
+                func,
+            )
+        })
+        .collect()
+}
 pub struct NativeFunctions(
     HashMap<AccountAddress, HashMap<String, HashMap<String, NativeFunction>>>,
 );
@@ -58,30 +79,33 @@ impl NativeFunctions {
     }
 }
 
-pub struct NativeContext<'a> {
+pub struct NativeContext<'a, 'b> {
     interpreter: &'a mut Interpreter,
     data_store: &'a mut dyn DataStore,
     gas_status: &'a GasStatus<'a>,
     resolver: &'a Resolver<'a>,
+    extensions: &'a mut NativeContextExtensions<'b>,
 }
 
-impl<'a, 'b> NativeContext<'a> {
+impl<'a, 'b> NativeContext<'a, 'b> {
     pub(crate) fn new(
         interpreter: &'a mut Interpreter,
         data_store: &'a mut dyn DataStore,
         gas_status: &'a mut GasStatus,
         resolver: &'a Resolver<'a>,
+        extensions: &'a mut NativeContextExtensions<'b>,
     ) -> Self {
         Self {
             interpreter,
             data_store,
             gas_status,
             resolver,
+            extensions,
         }
     }
 }
 
-impl<'a> NativeContext<'a> {
+impl<'a, 'b> NativeContext<'a, 'b> {
     pub fn print_stack_trace(&self, buf: &mut String) -> PartialVMResult<()> {
         self.interpreter
             .debug_print_stack_trace(buf, self.resolver.loader())
@@ -113,6 +137,13 @@ impl<'a> NativeContext<'a> {
         }
     }
 
+    pub fn extensions(&self) -> &NativeContextExtensions<'b> {
+        self.extensions
+    }
+
+    pub fn extensions_mut(&mut self) -> &mut NativeContextExtensions<'b> {
+        self.extensions
+    }
     pub fn type_to_type_tag(&self, ty: &Type) -> PartialVMResult<TypeTag> {
         self.resolver.type_to_type_tag(ty)
     }

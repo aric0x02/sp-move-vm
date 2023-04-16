@@ -5,7 +5,7 @@ authors = [
     "Alex Koz. <alexanderkozlovskii@wings.ai>",
     "Dm. Yakushev <dmitryyakushev@wings.ai>",
 ]
-edition = "2018"
+edition = "2021"
 publish = false
 license = "Apache-2.0"
 

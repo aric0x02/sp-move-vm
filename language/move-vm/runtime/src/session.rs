@@ -1,7 +1,9 @@
 // Copyright (c) The Diem Core Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{data_cache::TransactionDataCache, runtime::VMRuntime};
+use crate::{
+    data_cache::TransactionDataCache, native_functions::NativeContextExtensions, runtime::VMRuntime,
+};
 use alloc::vec::Vec;
 use move_binary_format::errors::*;
 use move_core_types::{
@@ -17,6 +19,7 @@ use move_vm_types::gas_schedule::GasStatus;
 pub struct Session<'r, 'l, S> {
     pub(crate) runtime: &'l VMRuntime,
     pub(crate) data_cache: TransactionDataCache<'r, 'l, S>,
+    pub(crate) native_extensions: NativeContextExtensions<'r>,
 }
 
 impl<'r, 'l, S: MoveResolver> Session<'r, 'l, S> {
@@ -50,6 +53,7 @@ impl<'r, 'l, S: MoveResolver> Session<'r, 'l, S> {
             args,
             &mut self.data_cache,
             gas_status,
+            &mut self.native_extensions,
         )
     }
 
@@ -94,6 +98,7 @@ impl<'r, 'l, S: MoveResolver> Session<'r, 'l, S> {
             senders,
             &mut self.data_cache,
             gas_status,
+            &mut self.native_extensions,
         )
     }
 
@@ -128,6 +133,7 @@ impl<'r, 'l, S: MoveResolver> Session<'r, 'l, S> {
             senders,
             &mut self.data_cache,
             gas_status,
+            &mut self.native_extensions,
         )
     }
 
@@ -188,6 +194,21 @@ impl<'r, 'l, S: MoveResolver> Session<'r, 'l, S> {
         self.data_cache
             .into_effects()
             .map_err(|e| e.finish(Location::Undefined))
+    }
+
+    /// Same like `finish`, but also extracts the native context extensions from the session.
+    pub fn finish_with_extensions(
+        self,
+    ) -> VMResult<(ChangeSet, Vec<Event>, NativeContextExtensions<'r>)> {
+        let Session {
+            data_cache,
+            native_extensions,
+            ..
+        } = self;
+        let (change_set, events) = data_cache
+            .into_effects()
+            .map_err(|e| e.finish(Location::Undefined))?;
+        Ok((change_set, events, native_extensions))
     }
 
     pub fn get_type_layout(&self, type_tag: &TypeTag) -> VMResult<MoveTypeLayout> {

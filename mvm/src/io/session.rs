@@ -9,22 +9,26 @@ use move_core_types::account_address::AccountAddress;
 use move_core_types::effects::{ChangeSet, Event};
 use move_core_types::language_storage::{ModuleId, StructTag, CORE_CODE_ADDRESS};
 use move_core_types::resolver::{ModuleResolver, ResourceResolver};
-
+use move_table_extension::{TableOperation,TableResolver,TableHandle};
+use move_core_types::gas_schedule::{InternalGasUnits,GasCarrier};
+use move_vm_runtime::native_functions::NativeContextExtensions;
+ const IDENTIFIER: &'static str = "RegisteredCurrencies";
 pub struct StateSession<
     'b,
     'r,
-    R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>,
+    R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>+TableResolver,
     B: BalanceAccess,
 > {
     remote: &'r R,
     context: Option<ExecutionContext>,
     coin_session: MasterOfCoinSession<'b, 'r, B, R>,
+    id: &'static str 
 }
 
 impl<
         'b,
         'r,
-        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>,
+        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>+TableResolver,
         B: BalanceAccess,
     > StateSession<'b, 'r, R, B>
 {
@@ -37,22 +41,24 @@ impl<
             remote,
             context,
             coin_session,
+            id:IDENTIFIER,
         }
     }
 
     pub fn finish(
-        self,
+        &self,
         (mut changes, events): (ChangeSet, Vec<Event>),
     ) -> VMResult<(ChangeSet, Vec<Event>, Vec<BalanceOp>)> {
         let balance_op = self.coin_session.finish(&mut changes)?;
         Ok((changes, events, balance_op))
     }
+  
 }
 
 impl<
         'b,
         'r,
-        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>,
+        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>+TableResolver,
         B: BalanceAccess,
     > ModuleResolver for StateSession<'b, 'r, R, B>
 {
@@ -66,7 +72,7 @@ impl<
 impl<
         'b,
         'r,
-        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>,
+        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>+TableResolver,
         B: BalanceAccess,
     > ResourceResolver for StateSession<'b, 'r, R, B>
 {
@@ -90,5 +96,34 @@ impl<
             }
         }
         self.remote.get_resource(address, tag)
+    }
+}
+
+
+impl<
+        'b,
+        'r,
+        R: ModuleResolver<Error = Error> + ResourceResolver<Error = Error>+TableResolver,
+        B: BalanceAccess,
+    > TableResolver for StateSession<'b, 'r, R, B>
+{
+    fn resolve_table_entry(
+        &self,
+        handle: &TableHandle,
+        key: &[u8],
+    ) -> Result<Option<Vec<u8>>, anyhow::Error> {
+        self.remote.resolve_table_entry(handle, key)
+    }
+    fn table_size(&self, handle: &TableHandle) -> Result<usize, anyhow::Error>{
+        self.remote.table_size(handle)
+    }
+
+    fn operation_cost(
+        &self,
+        op: TableOperation,
+        key_size: usize,
+        val_size: usize,
+    ) -> InternalGasUnits<GasCarrier>{
+        self.remote.operation_cost(op,key_size,val_size)
     }
 }

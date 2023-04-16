@@ -7,9 +7,10 @@ repository = "https://github.com/diem/diem"
 homepage = "https://diem.com"
 license = "Apache-2.0"
 publish = false
-edition = "2018"
+edition = "2021"
 
 [dependencies]
+better_any = "0.1.1"
 hashbrown = "0.9"
 mirai-annotations = { path = "../../../mirai-annotations", default-features = false }
 cell = { path = "../../../crates/cell", version = "0.1.0", default-features = false }

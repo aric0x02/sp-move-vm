@@ -170,7 +170,7 @@ impl<
         Ok(None)
     }
 
-    pub fn finish(self, changes: &mut ChangeSet) -> VMResult<Vec<BalanceOp>> {
+    pub fn finish(&self, changes: &mut ChangeSet) -> VMResult<Vec<BalanceOp>> {
         let mut ops = vec![];
         let balances = self.balances.take();
         if !balances.is_empty() {

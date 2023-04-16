@@ -5,7 +5,7 @@ use crate::{
     data_cache::TransactionDataCache,
     interpreter::Interpreter,
     loader::Loader,
-    native_functions::{NativeFunction, NativeFunctions},
+    native_functions::{NativeContextExtensions, NativeFunction, NativeFunctions},
     session::Session,
 };
 use alloc::string::ToString;
@@ -56,9 +56,21 @@ impl VMRuntime {
         Session {
             runtime: self,
             data_cache: TransactionDataCache::new(remote, &self.loader),
+            native_extensions: NativeContextExtensions::default(),
         }
     }
 
+    pub fn new_session_with_extensions<'r, S: MoveResolver>(
+        &self,
+        remote: &'r S,
+        native_extensions: NativeContextExtensions<'r>,
+    ) -> Session<'r, '_, S> {
+        Session {
+            runtime: self,
+            data_cache: TransactionDataCache::new(remote, &self.loader),
+            native_extensions,
+        }
+    }
     /// Clear loader.
     pub fn clear(&self) {
         self.loader.clear();
@@ -316,6 +328,7 @@ impl VMRuntime {
         senders: Vec<AccountAddress>,
         data_store: &mut impl DataStore,
         gas_status: &mut GasStatus,
+	    extensions: &mut NativeContextExtensions,
     ) -> VMResult<()> {
         // load the script, perform verification
         let (main, ty_args, params) = self.loader.load_script(&script, &ty_args, data_store)?;
@@ -330,6 +343,7 @@ impl VMRuntime {
             signers_and_args,
             data_store,
             gas_status,
+extensions,
             &self.loader,
         )?;
 
@@ -355,6 +369,7 @@ impl VMRuntime {
         is_script_execution: bool,
         data_store: &mut impl DataStore,
         gas_status: &mut GasStatus,
+	extensions: &mut NativeContextExtensions,
     ) -> VMResult<Vec<Vec<u8>>>
     where
         F: FnOnce(&VMRuntime, u32, &[Type]) -> PartialVMResult<Vec<Value>>,
@@ -390,7 +405,7 @@ impl VMRuntime {
             .map_err(|err| err.finish(Location::Undefined))?;
 
         let return_vals =
-            Interpreter::entrypoint(func, ty_args, args, data_store, gas_status, &self.loader)?;
+            Interpreter::entrypoint(func, ty_args, args, data_store, gas_status, extensions, &self.loader)?;
 
         if return_layouts.len() != return_vals.len() {
             return Err(
@@ -426,6 +441,7 @@ impl VMRuntime {
         senders: Vec<AccountAddress>,
         data_store: &mut impl DataStore,
         gas_status: &mut GasStatus,
+        extensions: &mut NativeContextExtensions,
     ) -> VMResult<()> {
         let return_vals = self.execute_function_impl(
             module,
@@ -437,6 +453,7 @@ impl VMRuntime {
             true,
             data_store,
             gas_status,
+	    extensions,
         )?;
 
         // A script function that serves as the entry point of execution cannot have return values,
@@ -466,6 +483,7 @@ impl VMRuntime {
         args: Vec<Vec<u8>>,
         data_store: &mut impl DataStore,
         gas_status: &mut GasStatus,
+        extensions: &mut NativeContextExtensions,
     ) -> VMResult<Vec<Vec<u8>>> {
         self.execute_function_impl(
             module,
@@ -475,6 +493,7 @@ impl VMRuntime {
             false,
             data_store,
             gas_status,
+            extensions,
         )
     }
 

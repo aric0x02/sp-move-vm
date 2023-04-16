@@ -1,0 +1,40 @@
+[package]
+name = "move-table-extension"
+version = "0.1.0"
+authors = ["Diem Association <opensource@diem.com>"]
+description = "Wrapper for the Move VM which coordinates multiple extensions"
+repository = "https://github.com/diem/move"
+license = "Apache-2.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# downcast-rs = "1.2.0"
+# walkdir = "2.3.1"
+# itertools = "0.10.0"
+smallvec = { version = "1.6.1", default-features = false }
+bcs = { path = "../../../bcs", default-features = false }
+sha3 = { version = "0.9.1", default-features = false }
+anyhow = { version = "1.0.38", default-features = false }
+cell = { path = "../../../crates/cell", default-features = false }
+move-core-types = { path = "../../move-core/types", default-features = false }
+move-vm-types = { path = "../../move-vm/types" , default-features = false}
+move-vm-runtime = { path = "../../move-vm/runtime" , default-features = false}
+move-binary-format = { path = "../../move-binary-format" , default-features = false}
+better_any = "0.1.1"
+[dev-dependencies]
+move-stdlib = { path = "../../move-stdlib" }
+# tempfile = "3.2.0"
+#dir-diff = "0.3.2"
+#file_diff = "1.0.0"
+[features]
+# fuzzing = ["proptest", "move-binary-format/fuzzing"]
+default = ["std"]
+std = [
+	"sha3/std",
+	"move-binary-format/std",
+	"move-core-types/std",
+    "move-vm-types/std",
+    "move-vm-runtime/std",
+ "cell/std",
+]
