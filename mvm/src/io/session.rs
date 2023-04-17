@@ -12,7 +12,6 @@ use move_core_types::resolver::{ModuleResolver, ResourceResolver};
 use move_table_extension::{TableOperation,TableResolver,TableHandle};
 use move_core_types::gas_schedule::{InternalGasUnits,GasCarrier};
 use move_vm_runtime::native_functions::NativeContextExtensions;
- const IDENTIFIER: &'static str = "RegisteredCurrencies";
 pub struct StateSession<
     'b,
     'r,
@@ -22,7 +21,6 @@ pub struct StateSession<
     remote: &'r R,
     context: Option<ExecutionContext>,
     coin_session: MasterOfCoinSession<'b, 'r, B, R>,
-    id: &'static str 
 }
 
 impl<
@@ -41,7 +39,6 @@ impl<
             remote,
             context,
             coin_session,
-            id:IDENTIFIER,
         }
     }
 

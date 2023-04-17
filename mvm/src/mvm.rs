@@ -41,16 +41,6 @@ move_stdlib::natives::all_natives(move_std_addr).into_iter().chain(move_table_ex
             move_std_addr
         )).collect()
 }
-//   pub fn extensions(&self,session_id:[u8; 32])->NativeContextExtensions{
-//         let mut extensions = NativeContextExtensions::default();
-//         let _txn_hash: u128 = session_id
-//             .iter().fold(0,|mut a,&b| {a+=b as u128;a});
-//         extensions.add(move_table_extension::NativeTableContext::new(_txn_hash, self));
-//     extensions
-//     }
-// pub struct Vms<'a, Vm> {
-//     vm: &'a Vm,
-// }
 
 /// MoveVM.
 pub struct Mvm<S, E, B>
@@ -64,8 +54,6 @@ where
     state: State<S>,
     event_handler: E,
     master_of_coin: MasterOfCoin<B>,
-    // static_state_session: OnceCell<StateSession<'c, '_, State<S>, B>>
-    // task:AptosExecutorTask<'a, S>,
 }
 
 impl<S, E, B> Mvm<S, E, B>
@@ -100,15 +88,8 @@ where
             state: State::new(store),
             event_handler,
             master_of_coin: MasterOfCoin::new(balance),
-            // static_state_session:OnceCell::new(),
-            // task:AptosExecutorTask::init(),
         })
     }
-// fn a(& self) -> impl Vm + 'static
-// {
-//     self
-// }
-
     pub(crate) fn execute_function(
         &self,
         sender: AccountAddress,
@@ -120,12 +101,7 @@ where
         context: Option<ExecutionContext>,
     ) -> VmResult {
          let state_session = self.state.state_session(context, &self.master_of_coin);
-        let mut extensions = NativeContextExtensions::default();
-        let _txn_hash: u128 = [0]
-            .iter().fold(0,|mut a,&b| {a+=b as u128;a});
-        // extensions.add(move_table_extension::NativeTableContext::new(_txn_hash, state_session));
-        let mut session = self.vm.new_session_with_extensions(&state_session,extensions);
-        // let mut session = self.vm.new_session(&state_session);  
+        let mut session = self.vm.new_session(&state_session);  
         let mut cost_strategy =
             GasStatus::new(&self.cost_table, GasUnits::new(gas.max_gas_amount()));
 

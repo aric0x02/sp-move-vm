@@ -8,6 +8,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #[macro_use]
 extern crate alloc;
+#[macro_use]
+extern crate better_typeid_derive;
 use better_any::{Tid, TidAble};
 use alloc::string::ToString;
 use alloc::vec::Vec;
