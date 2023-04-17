@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 description = "Type id and Any for non static types"
 readme = "../README.md"
 keywords = ["Any", "TypeId", "downcast"]
-edition = "2018"
+edition = "2021"
 
 
 [features]
