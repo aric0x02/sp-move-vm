@@ -62,7 +62,7 @@ impl<'a> NativeContextExtensions<'a> {
 #[cfg(test)]
 mod tests {
     use crate::native_extensions::NativeContextExtensions;
-    use better_any::{Tid, TidAble};
+    use better_any::{TidAble};
 
     #[derive(Tid)]
     struct Ext<'a> {

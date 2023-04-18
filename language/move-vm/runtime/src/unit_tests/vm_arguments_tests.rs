@@ -753,7 +753,7 @@ fn call_missing_item() {
     let function_name = IdentStr::new("foo").unwrap();
     // mising module
     let move_vm = MoveVM::new(vec![]).unwrap();
-    let mut remote_view = RemoteStore::new();
+    let remote_view = RemoteStore::new();
     let mut session = move_vm.new_session(&remote_view);
     let mut gas_status = GasStatus::new_unmetered();
     let error = session

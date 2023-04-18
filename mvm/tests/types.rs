@@ -65,7 +65,7 @@ fn test_module_function() {
 #[test]
 fn test_module_function2() {
     let tx = Transaction::try_from(
-        &include_bytes!("assets/build/assets/transaction/ScriptBook2_test2.mvt")[..],
+        &include_bytes!("assets/build/assets/transaction/ScriptBook_test2.mvt")[..],
     )
     .unwrap();
     assert_eq!(tx.signers_count(), 0);
@@ -78,9 +78,9 @@ fn test_module_function2() {
             mod_name,
             func_name,
         } => {
-            assert_eq!(*mod_address,  AccountAddress::from_hex_literal("0x13")
+            assert_eq!(*mod_address,  AccountAddress::from_hex_literal("0x1")
         .expect("Parsing valid hex literal should always succeed"));
-            assert_eq!(mod_name.as_str(), "ScriptBook2");
+            assert_eq!(mod_name.as_str(), "ScriptBook");
             assert_eq!(func_name.as_str(), "test2");
         }
     };
@@ -173,7 +173,7 @@ fn test_parse_pac() {
     modules.sort();
     assert_eq!(
         modules.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
-        vec!["Abort", "EventProxy", "Foo", "ScriptBook","ScriptBook2", "Store"]
+        vec!["Abort", "EventProxy", "Foo", "ScriptBook", "Store"]
     );
 }
 

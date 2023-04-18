@@ -33,12 +33,7 @@ pub fn script_book_module() -> ModuleTx {
         CORE_CODE_ADDRESS,
     )
 }
-pub fn script_book_module2() -> ModuleTx {
-    ModuleTx::new(
-        include_bytes!("../assets/build/assets/bytecode_modules/ScriptBook2.mv").to_vec(),
-        addr("0x13"),
-    )
-}
+
 pub fn event_proxy_module() -> ModuleTx {
     ModuleTx::new(
         include_bytes!("../assets/build/assets/bytecode_modules/EventProxy.mv").to_vec(),

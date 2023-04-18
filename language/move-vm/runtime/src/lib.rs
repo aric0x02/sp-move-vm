@@ -15,8 +15,7 @@ extern crate mirai_annotations;
 #[macro_use]
 extern crate alloc;
 extern crate log;
-// #[cfg(not(test))]
-// #[macro_use]
+#[macro_use]
 extern crate better_typeid_derive;
 pub mod data_cache;
 mod interpreter;

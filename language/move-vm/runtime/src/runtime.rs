@@ -102,6 +102,7 @@ impl VMRuntime {
         // publish a module under anyone's account.
         for module in &compiled_modules {
             if module.address() != &sender {
+                println!("module.address() , &sender={:?},{:?}",module.address() , &sender);
                 return Err(verification_error(
                     StatusCode::MODULE_ADDRESS_DOES_NOT_MATCH_SENDER,
                     IndexKind::AddressIdentifier,

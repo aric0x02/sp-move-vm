@@ -41,7 +41,7 @@ mv  ./build/assets/bundles/assets_old.pac ./build/assets/bundles/assets.pac
 dove call "rt_signers(rt)"
 dove call "signers_tr_with_user(root)"
 dove call "Assets::ScriptBook::test"
-dove call "TestAddr::ScriptBook2::test2(2,3)"
+dove call "Assets::ScriptBook::test2(2,3)"
 dove call "signer_order"
 
 lockfile_release
