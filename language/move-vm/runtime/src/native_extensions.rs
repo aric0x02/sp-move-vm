@@ -4,7 +4,7 @@
 
 use better_any::{Tid, TidAble, TidExt};
 use hashbrown::HashMap;
-    use core::any::{Any, TypeId};
+    use core::any::{TypeId};
  use alloc::boxed::Box;
 /// A data type to represent a heterogeneous collection of extensions which are available to
 /// native functions. A value to this is passed into the session function execution.

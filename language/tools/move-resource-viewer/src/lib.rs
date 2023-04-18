@@ -16,7 +16,7 @@ use move_core_types::{
     identifier::{IdentStr, Identifier},
     language_storage::{ModuleId, StructTag, TypeTag},
     resolver::MoveResolver,
-    value::{MoveStruct, MoveTypeLayout, MoveValue},
+    value::{MoveStruct,  MoveValue},
     vm_status::VMStatus,
 };
 use serde::ser::{SerializeMap, SerializeSeq};

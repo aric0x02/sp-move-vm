@@ -10,7 +10,6 @@ publish = false
 edition = "2021"
 
 [dependencies]
-better_any ={path = "../../../better_any/better_any/", default-features = false}
 hashbrown = "0.9"
 mirai-annotations = { path = "../../../mirai-annotations", default-features = false }
 cell = { path = "../../../crates/cell", version = "0.1.0", default-features = false }
@@ -25,7 +24,8 @@ diem-crypto = { path = "../../../crates/diem-crypto", default-features = false }
 move-core-types = { path = "../../move-core/types", default-features = false }
 move-vm-types = { path = "../types", default-features = false }
 move-binary-format = { path = "../../move-binary-format", default-features = false }
-
+better_any ={path = "../../../better_any/better_any/", default-features = false}
+better_typeid_derive ={path = "../../../better_any/better_typeid_derive", default-features = false}
 [features]
 default = ["std"]
 

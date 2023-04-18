@@ -1335,10 +1335,10 @@ impl<'a> Resolver<'a> {
 // When code executes indexes in instructions are resolved against those runtime structure
 // so that any data needed for execution is immediately available
 #[derive(Debug)]
-pub(crate) struct Module {
-    id: ModuleId,
+pub struct Module {
+    pub id: ModuleId,
     // primitive pools
-    module: CompiledModule,
+    pub module: CompiledModule,
 
     //
     // types as indexes into the Loader type list
@@ -1348,7 +1348,7 @@ pub(crate) struct Module {
     // That is effectively an indirection over the ref table:
     // the instruction carries an index into this table which contains the index into the
     // glabal table of types. No instantiation of generic types is saved into the global table.
-    struct_refs: Vec<usize>,
+    pub struct_refs: Vec<usize>,
     structs: Vec<StructDef>,
     // materialized instantiations, whether partial or not
     struct_instantiations: Vec<StructInstantiation>,
@@ -1987,10 +1987,10 @@ struct FieldHandle {
 
 // A field instantiation. The offset is the only used information when operating on a field
 #[derive(Debug)]
-struct FieldInstantiation {
-    offset: usize,
+pub struct FieldInstantiation {
+    pub offset: usize,
     // `ModuelCache::structs` global table index. It is the generic type.
-    owner: usize,
+    pub owner: usize,
 }
 
 //

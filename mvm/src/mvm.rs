@@ -15,8 +15,8 @@ use move_core_types::vm_status::{StatusCode, VMStatus};
 use move_vm_runtime::move_vm::MoveVM;
 use move_vm_runtime::session::Session;
 
-use cell::{Lazy, OnceCell};
-use core::marker::Sync;
+// use cell::{Lazy, OnceCell};
+// use core::marker::Sync;
 use crate::abi::ModuleAbi;
 use crate::gas_schedule::cost_table;
 use crate::io::balance::{BalanceOp, MasterOfCoin};
@@ -27,13 +27,13 @@ use crate::io::traits::{BalanceAccess, EventHandler, Storage};
 use crate::types::{Call, Gas, ModuleTx, PublishPackageTx, ScriptTx, VmResult};
 use crate::{StateAccess, Vm};
 use move_binary_format::CompiledModule;
-use move_core_types::resolver::{ModuleResolver, ResourceResolver,MoveResolver};
+use move_core_types::resolver::{ModuleResolver, ResourceResolver};
 use move_vm_types::gas_schedule::GasStatus;
-use core::hash::Hash;
+// use core::hash::Hash;
 use move_vm_runtime::native_functions::{NativeContextExtensions,NativeFunctionTable};
-use move_core_types::gas_schedule::{GasCarrier, GasCost};
-use move_table_extension::{TableOperation,TableResolver,TableHandle};
-use alloc::boxed::Box;
+// use move_core_types::gas_schedule::{GasCarrier, GasCost};
+// use move_table_extension::{TableOperation,TableResolver,TableHandle};
+// use alloc::boxed::Box;
 
 // static static_state: OnceCell<State<(dyn Storage +Sync+ 'static)>> = OnceCell::new();
 pub fn pont_natives(move_std_addr: AccountAddress) -> NativeFunctionTable {

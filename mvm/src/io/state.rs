@@ -70,13 +70,13 @@ impl<S: Storage> TableResolver for State<S> {
     ) -> Result<Option<Vec<u8>>, anyhow::Error> {
         Ok(self.store.get(AccessKey::from((handle, key)).as_ref()))
     }
-    fn table_size(&self, handle: &TableHandle) -> Result<usize, anyhow::Error>{
+    fn table_size(&self, _handle: &TableHandle) -> Result<usize, anyhow::Error>{
         Ok(0)
     }
 
     fn operation_cost(
         &self,
-        op: TableOperation,
+        _op: TableOperation,
         key_size: usize,
         val_size: usize,
     ) -> InternalGasUnits<GasCarrier>{

@@ -762,7 +762,7 @@ fn call_missing_item() {
         .unwrap();
     assert_eq!(error.major_status(), StatusCode::LINKER_ERROR);
     assert_eq!(error.status_type(), StatusType::Verification);
-
+    let mut remote_view = RemoteStore::new();
     // missing function
     remote_view.add_module(module);
     let mut session = move_vm.new_session(&remote_view);

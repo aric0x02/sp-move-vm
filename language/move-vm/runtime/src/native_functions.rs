@@ -2,13 +2,13 @@
 // Copyright (c) The Move Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-use better_any::{Tid, TidAble, TidExt};
+// use better_any::{Tid, TidAble, TidExt};
 use crate::{interpreter::Interpreter, loader::Resolver};
 use alloc::collections::VecDeque;
 use alloc::string::String;
 use alloc::vec::Vec;
 use hashbrown::HashMap;
-use alloc::boxed::Box;
+// use alloc::boxed::Box;
 use move_binary_format::errors::{PartialVMError, PartialVMResult};
 use move_core_types::language_storage::TypeTag;
 use move_core_types::{
@@ -22,7 +22,7 @@ use move_vm_types::{
     data_store::DataStore, gas_schedule::GasStatus, loaded_data::runtime_types::Type,
     natives::function::NativeResult, values::Value,
 };
-    use core::any::{Any, TypeId};
+    // use core::any::{Any, TypeId};
 pub use crate::native_extensions::NativeContextExtensions;
 pub type NativeFunction =
     fn(&mut NativeContext, Vec<Type>, VecDeque<Value>) -> PartialVMResult<NativeResult>;

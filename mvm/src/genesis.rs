@@ -79,7 +79,7 @@ pub struct GenesisConfig {
 impl Default for GenesisConfig {
     #[cfg(feature = "move_stdlib")]
     fn default() -> Self {
-        use core::convert::TryFrom;
+        // use core::convert::TryFrom;
         let pont_stdlib =
             ModulePackage::try_from(stdlib::pont_stdlib_package()).expect("Expected valid stdlib");
         let mut move_stdlib =
@@ -88,9 +88,9 @@ impl Default for GenesisConfig {
         let stdlib = move_stdlib.into_tx(CORE_CODE_ADDRESS);
 
         let cost_table = cost_table();
-        let instr_gas_costs = bcs::to_bytes(&cost_table.instruction_table)
+        let _instr_gas_costs = bcs::to_bytes(&cost_table.instruction_table)
             .expect("Expected to convert instr gas costs to bsc bytes");
-        let native_gas_costs = bcs::to_bytes(&cost_table.native_table)
+        let _native_gas_costs = bcs::to_bytes(&cost_table.native_table)
             .expect("Expected to convert genesis native gas costs to bsc bytes");
         let chain_id: ChainId = Default::default();
 

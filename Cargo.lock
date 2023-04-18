@@ -217,11 +217,20 @@ dependencies = [
 
 [[package]]
 name = "better_any"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b359aebd937c17c725e19efcb661200883f04c49c53e7132224dac26da39d4a0"
+version = "0.2.0"
 dependencies = [
- "better_typeid_derive",
+ "better_typeid_derive 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "macrotest",
+ "trybuild",
+]
+
+[[package]]
+name = "better_typeid_derive"
+version = "0.1.1"
+dependencies = [
+ "proc-macro2 1.0.51",
+ "quote 1.0.23",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -833,6 +842,12 @@ dependencies = [
  "hex",
  "move-core-types",
 ]
+
+[[package]]
+name = "diff"
+version = "0.1.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
 
 [[package]]
 name = "digest"
@@ -1592,6 +1607,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "macrotest"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7489ae0986ce45414b7b3122c2e316661343ecf396b206e3e15f07c846616f10"
+dependencies = [
+ "diff",
+ "glob",
+ "prettyplease",
+ "serde",
+ "serde_json",
+ "syn 1.0.109",
+ "toml",
+]
+
+[[package]]
 name = "matchers"
 version = "0.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1739,6 +1769,7 @@ dependencies = [
  "anyhow",
  "bcs",
  "better_any",
+ "better_typeid_derive 0.1.1",
  "cell",
  "move-binary-format",
  "move-core-types",
@@ -1755,6 +1786,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "better_any",
+ "better_typeid_derive 0.1.1",
  "bytecode-verifier",
  "cell",
  "diem-crypto",
@@ -2114,6 +2146,16 @@ name = "ppv-lite86"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
+
+[[package]]
+name = "prettyplease"
+version = "0.1.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c8646e95016a7a6c4adea95bafa8a16baab64b583356217f2c85db4a39d9a86"
+dependencies = [
+ "proc-macro2 1.0.51",
+ "syn 1.0.109",
+]
 
 [[package]]
 name = "primitive-types"
@@ -3189,6 +3231,15 @@ name = "tinyvec_macros"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+
+[[package]]
+name = "toml"
+version = "0.5.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "toml_datetime"

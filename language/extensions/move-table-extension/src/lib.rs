@@ -10,7 +10,7 @@
 extern crate alloc;
 #[macro_use]
 extern crate better_typeid_derive;
-use better_any::{Tid, TidAble};
+use better_any::{TidAble};
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use move_binary_format::errors::{PartialVMError, PartialVMResult};

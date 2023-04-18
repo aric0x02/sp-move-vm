@@ -11,7 +11,7 @@ use move_core_types::language_storage::{ModuleId, StructTag, CORE_CODE_ADDRESS};
 use move_core_types::resolver::{ModuleResolver, ResourceResolver};
 use move_table_extension::{TableOperation,TableResolver,TableHandle};
 use move_core_types::gas_schedule::{InternalGasUnits,GasCarrier};
-use move_vm_runtime::native_functions::NativeContextExtensions;
+// use move_vm_runtime::native_functions::NativeContextExtensions;
 pub struct StateSession<
     'b,
     'r,
