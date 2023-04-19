@@ -16,7 +16,7 @@ use move_core_types::{
     identifier::{IdentStr, Identifier},
     language_storage::{ModuleId, StructTag, TypeTag},
     resolver::MoveResolver,
-    value::{MoveStruct,  MoveValue},
+    value::{MoveStruct, MoveValue},
     vm_status::VMStatus,
 };
 use serde::ser::{SerializeMap, SerializeSeq};
@@ -134,7 +134,7 @@ impl<'a, T: MoveResolver + ?Sized> MoveValueAnnotator<'a, T> {
                 .into_iter()
                 .zip(runtime.into_iter())
                 .collect(),
-            MoveStruct::WithFields(fields)  => fields,
+            MoveStruct::WithFields(fields) => fields,
         })
     }
 

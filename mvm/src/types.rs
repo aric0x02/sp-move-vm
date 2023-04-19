@@ -319,17 +319,14 @@ impl Transaction {
     }
 
     pub fn to_vec(&self) -> Option<Vec<u8>> {
-         bcs::to_bytes(&self).ok()
+        bcs::to_bytes(&self).ok()
     }
-    pub fn args_to_vec(
-        args: Vec<MoveValue>,
-    ) -> Option<Vec<Vec<u8>>> {
-            args
-            .into_iter()
+    pub fn args_to_vec(args: Vec<MoveValue>) -> Option<Vec<Vec<u8>>> {
+        args.into_iter()
             .map(|val: MoveValue| bcs::to_bytes(&val))
             .collect::<Result<_, _>>()
             .ok()
-     }
+    }
 }
 
 impl AsRef<TxV1> for Transaction {

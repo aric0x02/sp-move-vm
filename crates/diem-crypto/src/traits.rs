@@ -201,8 +201,6 @@ pub trait VerifyingKey:
     type SignatureMaterial: Signature<VerifyingKeyMaterial = Self>;
 }
 
-
-
 /// A type family for signature material that knows which public key type
 /// is needed to verify it, and given such a public key, knows how to
 /// verify.

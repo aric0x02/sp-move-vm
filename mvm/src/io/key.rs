@@ -1,9 +1,9 @@
 use alloc::vec::Vec;
+use core::convert::TryInto;
 use diem_types::access_path::AccessPath;
 use move_core_types::account_address::AccountAddress;
 use move_core_types::language_storage::{ModuleId, StructTag};
 use move_table_extension::TableHandle;
-use core::convert::TryInto;
 pub struct AccessKey(Vec<u8>);
 
 pub enum KeyType {
@@ -45,8 +45,8 @@ impl From<&ModuleId> for AccessKey {
 
 impl From<(&TableHandle, &[u8])> for AccessKey {
     fn from((handle, th_key): (&TableHandle, &[u8])) -> Self {
-        let handle_bytes:[u8; 16] = handle.0.to_be_bytes().try_into().unwrap();
-        let handle_bytes:&[u8] = &handle_bytes;
+        let handle_bytes: [u8; 16] = handle.0.to_be_bytes().try_into().unwrap();
+        let handle_bytes: &[u8] = &handle_bytes;
         let mut key = Vec::with_capacity(handle_bytes.len() + th_key.len());
         key.extend_from_slice(handle_bytes);
         key.extend_from_slice(th_key);

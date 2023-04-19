@@ -15,7 +15,6 @@ use alloc::vec::Vec;
 use anyhow::Error;
 use diem_types::account_address::AccountAddress;
 
-
 pub mod abi;
 pub mod error;
 pub mod gas_schedule;

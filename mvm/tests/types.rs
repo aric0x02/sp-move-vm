@@ -78,8 +78,11 @@ fn test_module_function2() {
             mod_name,
             func_name,
         } => {
-            assert_eq!(*mod_address,  AccountAddress::from_hex_literal("0x1")
-        .expect("Parsing valid hex literal should always succeed"));
+            assert_eq!(
+                *mod_address,
+                AccountAddress::from_hex_literal("0x1")
+                    .expect("Parsing valid hex literal should always succeed")
+            );
             assert_eq!(mod_name.as_str(), "ScriptBook");
             assert_eq!(func_name.as_str(), "test2");
         }

@@ -5,10 +5,14 @@ use crate::{
     logging::expect_no_verification_errors,
     native_functions::{NativeFunction, NativeFunctions},
 };
-use alloc::{borrow::ToOwned,boxed::Box,
-collections::{BTreeMap, BTreeSet},
-string::{String,ToString},
-sync::Arc,vec::Vec};
+use alloc::{
+    borrow::ToOwned,
+    boxed::Box,
+    collections::{BTreeMap, BTreeSet},
+    string::{String, ToString},
+    sync::Arc,
+    vec::Vec,
+};
 use synctools::rwlock::RwLock;
 // use parking_lot::RwLock;
 use bytecode_verifier::{self, cyclic_dependencies, dependencies, script_signature};

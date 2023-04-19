@@ -22,7 +22,7 @@ use move_vm_types::{
     data_store::DataStore, gas_schedule::GasStatus, loaded_data::runtime_types::Type,
     natives::function::NativeResult, values::Value,
 };
-    // use core::any::{Any, TypeId};
+// use core::any::{Any, TypeId};
 pub use crate::native_extensions::NativeContextExtensions;
 pub type NativeFunction =
     fn(&mut NativeContext, Vec<Type>, VecDeque<Value>) -> PartialVMResult<NativeResult>;

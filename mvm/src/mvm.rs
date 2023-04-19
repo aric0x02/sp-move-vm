@@ -30,16 +30,17 @@ use move_binary_format::CompiledModule;
 use move_core_types::resolver::{ModuleResolver, ResourceResolver};
 use move_vm_types::gas_schedule::GasStatus;
 // use core::hash::Hash;
-use move_vm_runtime::native_functions::{NativeContextExtensions,NativeFunctionTable};
+use move_vm_runtime::native_functions::{NativeContextExtensions, NativeFunctionTable};
 // use move_core_types::gas_schedule::{GasCarrier, GasCost};
 // use move_table_extension::{TableOperation,TableResolver,TableHandle};
 // use alloc::boxed::Box;
 
 // static static_state: OnceCell<State<(dyn Storage +Sync+ 'static)>> = OnceCell::new();
 pub fn pont_natives(move_std_addr: AccountAddress) -> NativeFunctionTable {
-move_stdlib::natives::all_natives(move_std_addr).into_iter().chain(move_table_extension::table_natives(
-            move_std_addr
-        )).collect()
+    move_stdlib::natives::all_natives(move_std_addr)
+        .into_iter()
+        .chain(move_table_extension::table_natives(move_std_addr))
+        .collect()
 }
 
 /// MoveVM.
@@ -78,12 +79,10 @@ where
         config: VMConfig,
     ) -> Result<Mvm<S, E, B>, Error> {
         Ok(Mvm {
-            vm: MoveVM::new(pont_natives(CORE_CODE_ADDRESS)).map_err(
-                |err| {
-                    let (code, _, msg, _, _, _) = err.all_data();
-                    anyhow!("Error code:{:?}: msg: '{}'", code, msg.unwrap_or_default())
-                },
-            )?,
+            vm: MoveVM::new(pont_natives(CORE_CODE_ADDRESS)).map_err(|err| {
+                let (code, _, msg, _, _, _) = err.all_data();
+                anyhow!("Error code:{:?}: msg: '{}'", code, msg.unwrap_or_default())
+            })?,
             cost_table: config.gas_schedule,
             state: State::new(store),
             event_handler,
@@ -100,8 +99,8 @@ where
         args: Vec<Vec<u8>>,
         context: Option<ExecutionContext>,
     ) -> VmResult {
-         let state_session = self.state.state_session(context, &self.master_of_coin);
-        let mut session = self.vm.new_session(&state_session);  
+        let state_session = self.state.state_session(context, &self.master_of_coin);
+        let mut session = self.vm.new_session(&state_session);
         let mut cost_strategy =
             GasStatus::new(&self.cost_table, GasUnits::new(gas.max_gas_amount()));
 
@@ -115,7 +114,6 @@ where
             result.and_then(|_| session.finish().map(|(ws, e)| (ws, e, vec![]))),
             false,
         )
-        
     }
 
     /// Stores write set into storage and handle events.
@@ -308,10 +306,17 @@ where
             .state_session(Some(context), &self.master_of_coin);
         // let mut vm_session = self.vm.new_session(&state_session);
         let mut extensions = NativeContextExtensions::default();
-        let _txn_hash: u128 = [0]
-            .iter().fold(0,|mut a,&b| {a+=b as u128;a});
-        extensions.add(move_table_extension::NativeTableContext::new(_txn_hash, &state_session));
-        let mut vm_session = self.vm.new_session_with_extensions(&state_session,extensions);
+        let _txn_hash: u128 = [0].iter().fold(0, |mut a, &b| {
+            a += b as u128;
+            a
+        });
+        extensions.add(move_table_extension::NativeTableContext::new(
+            _txn_hash,
+            &state_session,
+        ));
+        let mut vm_session = self
+            .vm
+            .new_session_with_extensions(&state_session, extensions);
 
         let (script, args, type_args, senders) = tx.into_inner();
         let sender = senders.get(0).cloned().unwrap_or(AccountAddress::ZERO);

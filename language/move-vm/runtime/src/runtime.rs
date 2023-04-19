@@ -328,7 +328,7 @@ impl VMRuntime {
         senders: Vec<AccountAddress>,
         data_store: &mut impl DataStore,
         gas_status: &mut GasStatus,
-	    extensions: &mut NativeContextExtensions,
+        extensions: &mut NativeContextExtensions,
     ) -> VMResult<()> {
         // load the script, perform verification
         let (main, ty_args, params) = self.loader.load_script(&script, &ty_args, data_store)?;
@@ -343,7 +343,7 @@ impl VMRuntime {
             signers_and_args,
             data_store,
             gas_status,
-extensions,
+            extensions,
             &self.loader,
         )?;
 
@@ -369,7 +369,7 @@ extensions,
         is_script_execution: bool,
         data_store: &mut impl DataStore,
         gas_status: &mut GasStatus,
-	extensions: &mut NativeContextExtensions,
+        extensions: &mut NativeContextExtensions,
     ) -> VMResult<Vec<Vec<u8>>>
     where
         F: FnOnce(&VMRuntime, u32, &[Type]) -> PartialVMResult<Vec<Value>>,
@@ -404,8 +404,15 @@ extensions,
         let args = make_args(self, func.file_format_version(), &params)
             .map_err(|err| err.finish(Location::Undefined))?;
 
-        let return_vals =
-            Interpreter::entrypoint(func, ty_args, args, data_store, gas_status, extensions, &self.loader)?;
+        let return_vals = Interpreter::entrypoint(
+            func,
+            ty_args,
+            args,
+            data_store,
+            gas_status,
+            extensions,
+            &self.loader,
+        )?;
 
         if return_layouts.len() != return_vals.len() {
             return Err(
@@ -453,7 +460,7 @@ extensions,
             true,
             data_store,
             gas_status,
-	    extensions,
+            extensions,
         )?;
 
         // A script function that serves as the entry point of execution cannot have return values,

@@ -2,10 +2,10 @@
 // Copyright (c) The Move Contributors
 // SPDX-License-Identifier: Apache-2.0
 
+use alloc::boxed::Box;
 use better_any::{Tid, TidAble, TidExt};
+use core::any::TypeId;
 use hashbrown::HashMap;
-    use core::any::{TypeId};
- use alloc::boxed::Box;
 /// A data type to represent a heterogeneous collection of extensions which are available to
 /// native functions. A value to this is passed into the session function execution.
 ///
@@ -62,7 +62,7 @@ impl<'a> NativeContextExtensions<'a> {
 #[cfg(test)]
 mod tests {
     use crate::native_extensions::NativeContextExtensions;
-    use better_any::{TidAble};
+    use better_any::TidAble;
 
     #[derive(Tid)]
     struct Ext<'a> {
