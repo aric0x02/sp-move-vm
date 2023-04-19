@@ -388,12 +388,9 @@ impl<'a> dyn Tid<'a> + 'a {
     }
 }
 
-use core::cell::*;
-use alloc::rc::*;
-use alloc::vec::Vec;
-use alloc::sync::*;
-use alloc::boxed::Box;
-// use alloc::sync::Arc;
+use core::cell::{Cell,RefCell};
+use alloc::{boxed::Box,vec::Vec,rc::Rc,sync::Arc};
+// use std::sync::{Mutex,RwLock};
 tid!(impl<'a, T> TidAble<'a> for Box<T> where T:?Sized);
 tid!(impl<'a, T> TidAble<'a> for Rc<T>);
 tid!(impl<'a, T> TidAble<'a> for RefCell<T>);

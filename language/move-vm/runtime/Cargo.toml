@@ -18,7 +18,8 @@ anyhow = { version = "1.0.38", default-features = false }
 log = {version = "0.4", default-features = false }
 tracing = {version = "0.1.26", default-features = false }
 sha3 = {version = "0.9.1", default-features = false }
-
+synctools={version = "0.3.1", default-features = false }
+# parking_lot={version = "0.12.1", default-features = false }
 bytecode-verifier = { path = "../../bytecode-verifier", default-features = false }
 diem-crypto = { path = "../../../crates/diem-crypto", default-features = false }
 move-core-types = { path = "../../move-core/types", default-features = false }

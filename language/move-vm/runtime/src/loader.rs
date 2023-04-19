@@ -5,15 +5,13 @@ use crate::{
     logging::expect_no_verification_errors,
     native_functions::{NativeFunction, NativeFunctions},
 };
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
-use alloc::collections::{BTreeMap, BTreeSet};
-use alloc::string::String;
-use alloc::string::ToString;
-use alloc::sync::Arc;
-use alloc::vec::Vec;
+use alloc::{borrow::ToOwned,boxed::Box,
+collections::{BTreeMap, BTreeSet},
+string::{String,ToString},
+sync::Arc,vec::Vec};
+use synctools::rwlock::RwLock;
+// use parking_lot::RwLock;
 use bytecode_verifier::{self, cyclic_dependencies, dependencies, script_signature};
-use core::cell::RefCell;
 use core::{fmt::Debug, hash::Hash};
 use hashbrown::HashMap;
 use move_binary_format::{
@@ -426,27 +424,27 @@ impl ModuleCache {
 // (operating on values on the stack) and when cache needs updating the mutex must be taken.
 // The `pub(crate)` API is what a Loader offers to the runtime.
 pub struct Loader {
-    scripts: RefCell<ScriptCache>,
-    module_cache: RefCell<ModuleCache>,
-    type_cache: RefCell<TypeCache>,
+    scripts: RwLock<ScriptCache>,
+    module_cache: RwLock<ModuleCache>,
+    type_cache: RwLock<TypeCache>,
     natives: NativeFunctions,
 }
 
 impl Loader {
     pub fn new(natives: NativeFunctions) -> Self {
         Self {
-            scripts: RefCell::new(ScriptCache::new()),
-            module_cache: RefCell::new(ModuleCache::new()),
-            type_cache: RefCell::new(TypeCache::new()),
+            scripts: RwLock::new(ScriptCache::new()),
+            module_cache: RwLock::new(ModuleCache::new()),
+            type_cache: RwLock::new(TypeCache::new()),
             natives,
         }
     }
 
     /// Clears loader cache.
     pub fn clear(&self) {
-        *self.scripts.borrow_mut() = ScriptCache::new();
-        *self.module_cache.borrow_mut() = ModuleCache::new();
-        *self.type_cache.borrow_mut() = TypeCache::new();
+        // *self.scripts.borrow_mut() = ScriptCache::new();
+        // *self.module_cache.borrow_mut() = ModuleCache::new();
+        // *self.type_cache.borrow_mut() = TypeCache::new();
     }
 
     //
@@ -472,12 +470,12 @@ impl Loader {
         sha3_256.update(script_blob);
         let hash_value: [u8; 32] = sha3_256.finalize().into();
 
-        let mut scripts = self.scripts.borrow_mut();
+        let mut scripts = self.scripts.write();
         let (main, parameter_tys) = match scripts.get(&hash_value) {
             Some(main) => main,
             None => {
                 let ver_script = self.deserialize_and_verify_script(script_blob, data_store)?;
-                let script = Script::new(ver_script, &hash_value, &self.module_cache.borrow())?;
+                let script = Script::new(ver_script, &hash_value, &self.module_cache.read())?;
                 scripts.insert(hash_value, script)
             }
         };
@@ -570,10 +568,10 @@ impl Loader {
         let module = self.load_module(module_id, data_store)?;
         let idx = self
             .module_cache
-            .borrow()
+            .read()
             .resolve_function_by_name(function_name, module_id)
             .map_err(|err| err.finish(Location::Undefined))?;
-        let func = self.module_cache.borrow().function_at(idx);
+        let func = self.module_cache.read().function_at(idx);
 
         let parameter_tys = func
             .parameters
@@ -581,7 +579,7 @@ impl Loader {
             .iter()
             .map(|tok| {
                 self.module_cache
-                    .borrow()
+                    .read()
                     .make_type(BinaryIndexedView::Module(module.module()), tok)
             })
             .collect::<PartialVMResult<Vec<_>>>()
@@ -593,7 +591,7 @@ impl Loader {
             .iter()
             .map(|tok| {
                 self.module_cache
-                    .borrow()
+                    .read()
                     .make_type(BinaryIndexedView::Module(module.module()), tok)
             })
             .collect::<PartialVMResult<Vec<_>>>()
@@ -629,6 +627,7 @@ impl Loader {
         for module in modules {
             let module_id = module.self_id();
             bundle_unverified.remove(&module_id);
+
             self.verify_module_for_publication(
                 module,
                 &bundle_verified,
@@ -703,7 +702,7 @@ impl Loader {
         bundle_verified: &BTreeMap<ModuleId, CompiledModule>,
         bundle_unverified: &BTreeSet<ModuleId>,
     ) -> VMResult<()> {
-        let module_cache = self.module_cache.borrow();
+        let module_cache = self.module_cache.read();
         cyclic_dependencies::verify_module(
             module,
             |module_id| {
@@ -792,7 +791,7 @@ impl Loader {
                 self.load_module(&module_id, data_store)?;
                 let (idx, struct_type) = self
                     .module_cache
-                    .borrow()
+                    .read()
                     // GOOD module was loaded above
                     .resolve_struct_by_name(&struct_tag.name, &module_id)
                     .map_err(|e| e.finish(Location::Undefined))?;
@@ -831,7 +830,7 @@ impl Loader {
         data_store: &impl DataStore,
     ) -> VMResult<Arc<Module>> {
         // if the module is already in the code cache, load the cached version
-        if let Some(cached) = self.module_cache.borrow().module_at(id) {
+        if let Some(cached) = self.module_cache.read().module_at(id) {
             return Ok(cached);
         }
 
@@ -923,7 +922,7 @@ impl Loader {
         )?;
 
         // if linking goes well, insert the module to the code cache
-        let mut locked_cache = self.module_cache.borrow_mut();
+        let mut locked_cache = self.module_cache.write();
         let module_ref = locked_cache.insert(&self.natives, id.clone(), module)?;
         drop(locked_cache); // explicit unlock
 
@@ -950,7 +949,7 @@ impl Loader {
             if let Some(cached) = bundle_verified.get(&module_id) {
                 bundle_deps.push(cached);
             } else {
-                let locked_cache = self.module_cache.borrow();
+                let locked_cache = self.module_cache.read();
                 let loaded = match locked_cache.module_at(&module_id) {
                     None => {
                         drop(locked_cache); // explicit unlock
@@ -1042,7 +1041,7 @@ impl Loader {
         //   If the module under verification declares a friend which is also in the bundle (and
         //   positioned after this module in the bundle), we defer the loading of that module when
         //   it is the module's turn in the bundle.
-        let locked_cache = self.module_cache.borrow();
+        let locked_cache = self.module_cache.read();
         let new_imm_friends: Vec<_> = friends_discovered
             .into_iter()
             .filter(|mid| {
@@ -1092,13 +1091,13 @@ impl Loader {
     //
 
     fn function_at(&self, idx: usize) -> Arc<Function> {
-        self.module_cache.borrow().function_at(idx)
+        self.module_cache.read().function_at(idx)
     }
 
     fn get_module(&self, idx: &ModuleId) -> Arc<Module> {
         Arc::clone(
             self.module_cache
-                .borrow()
+                .read()
                 .modules
                 .get(idx)
                 .expect("ModuleId on Function must exist"),
@@ -1108,7 +1107,7 @@ impl Loader {
     fn get_script(&self, hash: &ScriptHash) -> Arc<Script> {
         Arc::clone(
             self.scripts
-                .borrow()
+                .read()
                 .scripts
                 .get(hash)
                 .expect("Script hash on Function must exist"),
@@ -1134,9 +1133,9 @@ impl Loader {
                 vec![false],
                 vec![self.abilities(ty)?],
             ),
-            Type::Struct(idx) => Ok(self.module_cache.borrow().struct_at(*idx).abilities),
+            Type::Struct(idx) => Ok(self.module_cache.read().struct_at(*idx).abilities),
             Type::StructInstantiation(idx, type_args) => {
-                let struct_type = self.module_cache.borrow().struct_at(*idx);
+                let struct_type = self.module_cache.read().struct_at(*idx);
                 let declared_phantom_parameters = struct_type
                     .type_parameters
                     .iter()
@@ -1800,7 +1799,7 @@ enum Scope {
 }
 
 // A runtime function
-//#[derive(Debug)]
+// #[derive(Debug)]
 // https://github.com/rust-lang/rust/issues/70263
 pub(crate) struct Function {
     file_format_version: u32,
@@ -2027,7 +2026,7 @@ const VALUE_DEPTH_MAX: usize = 256;
 
 impl Loader {
     fn struct_gidx_to_type_tag(&self, gidx: usize, ty_args: &[Type]) -> PartialVMResult<StructTag> {
-        if let Some(struct_map) = self.type_cache.borrow().structs.get(&gidx) {
+        if let Some(struct_map) = self.type_cache.read().structs.get(&gidx) {
             if let Some(struct_info) = struct_map.get(ty_args) {
                 if let Some(struct_tag) = &struct_info.struct_tag {
                     return Ok(struct_tag.clone());
@@ -2039,7 +2038,7 @@ impl Loader {
             .iter()
             .map(|ty| self.type_to_type_tag(ty))
             .collect::<PartialVMResult<Vec<_>>>()?;
-        let struct_type = self.module_cache.borrow().struct_at(gidx);
+        let struct_type = self.module_cache.read().struct_at(gidx);
         let struct_tag = StructTag {
             address: *struct_type.module.address(),
             module: struct_type.module.name().to_owned(),
@@ -2048,7 +2047,7 @@ impl Loader {
         };
 
         self.type_cache
-            .borrow_mut()
+            .write()
             .structs
             .entry(gidx)
             .or_insert_with(HashMap::new)
@@ -2087,7 +2086,7 @@ impl Loader {
         ty_args: &[Type],
         depth: usize,
     ) -> PartialVMResult<MoveStructLayout> {
-        if let Some(struct_map) = self.type_cache.borrow().structs.get(&gidx) {
+        if let Some(struct_map) = self.type_cache.read().structs.get(&gidx) {
             if let Some(struct_info) = struct_map.get(ty_args) {
                 if let Some(layout) = &struct_info.struct_layout {
                     return Ok(layout.clone());
@@ -2095,7 +2094,7 @@ impl Loader {
             }
         }
 
-        let struct_type = self.module_cache.borrow().struct_at(gidx);
+        let struct_type = self.module_cache.read().struct_at(gidx);
         let field_tys = struct_type
             .fields
             .iter()
@@ -2108,7 +2107,7 @@ impl Loader {
         let struct_layout = MoveStructLayout::new(field_layouts);
 
         self.type_cache
-            .borrow_mut()
+            .write()
             .structs
             .entry(gidx)
             .or_insert_with(HashMap::new)

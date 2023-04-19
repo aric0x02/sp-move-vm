@@ -27,6 +27,8 @@ diem-types = { path = "../types", default-features = false }
 move-stdlib = { path = "../language/move-stdlib", default-features = false }
 move-table-extension = { path = "../language/extensions/move-table-extension", default-features = false }
 getrandom = { version = "0.2.8", features = ["js"] }
+synctools={version = "0.3.1", default-features = false }
+
 [dependencies.sp-io]
 git = "https://github.com/paritytech/substrate"
 branch = "polkadot-v0.9.37"
@@ -42,12 +44,12 @@ move_stdlib = [
 ]
 std = [
     "anyhow/std",
-"sp-io/std",
+    "sp-io/std",
     "move-binary-format/std",
     "move-core-types/std",
     "move-vm-types/std",
     "move-vm-runtime/std",
-"move-table-extension/std",
+    "move-table-extension/std",
     "parity-scale-codec/std",
     "log/std",
     "cell/std",

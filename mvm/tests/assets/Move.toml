@@ -2,8 +2,7 @@
 name = "assets"
 version = "0.0.1"
 authors = []
-# dialect = "Pont"
-# dove_version = ">=1.5.4"
+
 
 [addresses]
 Assets = "0x1"
