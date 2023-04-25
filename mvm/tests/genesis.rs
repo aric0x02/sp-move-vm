@@ -1,8 +1,8 @@
-use mvm::genesis::{init_storage, GenesisConfig};
-
-use crate::common::contains_core_module;
-use crate::common::mock::StorageMock;
-use mvm::io::state::State;
+use crate::common::{contains_core_module, mock::StorageMock};
+use mvm::{
+    genesis::{init_storage, GenesisConfig},
+    io::state::State,
+};
 
 mod common;
 

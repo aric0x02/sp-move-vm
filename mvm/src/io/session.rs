@@ -1,15 +1,19 @@
-use crate::io::balance::{BalanceOp, MasterOfCoinSession};
-use crate::io::context::ExecutionContext;
-use crate::io::traits::BalanceAccess;
+use crate::io::{
+    balance::{BalanceOp, MasterOfCoinSession},
+    context::ExecutionContext,
+    traits::BalanceAccess,
+};
 use alloc::vec::Vec;
 use anyhow::Error;
 use diem_types::account_config;
 use move_binary_format::errors::VMResult;
-use move_core_types::account_address::AccountAddress;
-use move_core_types::effects::{ChangeSet, Event};
-use move_core_types::gas_schedule::{GasCarrier, InternalGasUnits};
-use move_core_types::language_storage::{ModuleId, StructTag,TypeTag, CORE_CODE_ADDRESS};
-use move_core_types::resolver::{ModuleResolver, ResourceResolver};
+use move_core_types::{
+    account_address::AccountAddress,
+    effects::{ChangeSet, Event},
+    gas_schedule::{GasCarrier, InternalGasUnits},
+    language_storage::{ModuleId, StructTag, TypeTag, CORE_CODE_ADDRESS},
+    resolver::{ModuleResolver, ResourceResolver},
+};
 use move_table_extension::{TableHandle, TableOperation, TableResolver};
 // use move_vm_runtime::native_functions::NativeContextExtensions;
 // use crate::types::{Call, Gas, ModuleTx, PublishPackageTx, ScriptTx};
@@ -20,25 +24,30 @@ use serde::{Deserialize, Serialize};
 #[derive(BCSCryptoHash, CryptoHasher, Deserialize, Serialize)]
 pub enum SessionId {
     Txn {
-       call: Vec<u8>,
-args: Vec<Vec<u8>>,
- type_args:Vec<TypeTag>,
-signers: Vec<AccountAddress>,
+        call: Vec<u8>,
+        args: Vec<Vec<u8>>,
+        type_args: Vec<TypeTag>,
+        signers: Vec<AccountAddress>,
     },
     ModuleTx {
- code: Vec<u8>,
-    sender: AccountAddress,
+        code: Vec<u8>,
+        sender: AccountAddress,
     },
     PublishPackageTx {
-   modules: Vec<Vec<u8>>,
-    address: AccountAddress,
+        modules: Vec<Vec<u8>>,
+        address: AccountAddress,
     },
     // For those runs that are not a transaction and the output of which won't be committed.
     Void,
 }
 
 impl SessionId {
-    pub fn txn( call: Vec<u8>,args: Vec<Vec<u8>>, type_args:Vec<TypeTag>,signers: Vec<AccountAddress>) -> Self {
+    pub fn txn(
+        call: Vec<u8>,
+        args: Vec<Vec<u8>>,
+        type_args: Vec<TypeTag>,
+        signers: Vec<AccountAddress>,
+    ) -> Self {
         Self::Txn {
             call,
             args,
@@ -46,18 +55,11 @@ impl SessionId {
             signers,
         }
     }
- pub fn module_tx( code: Vec<u8>,
-    sender: AccountAddress) -> Self {
-        Self::ModuleTx {
-            code,
-            sender,
-         }
+    pub fn module_tx(code: Vec<u8>, sender: AccountAddress) -> Self {
+        Self::ModuleTx { code, sender }
     }
- pub fn publish_package_tx(  modules: Vec<Vec<u8>>,address: AccountAddress) -> Self {
-        Self::PublishPackageTx {
-            modules,
-            address,
-         }
+    pub fn publish_package_tx(modules: Vec<Vec<u8>>, address: AccountAddress) -> Self {
+        Self::PublishPackageTx { modules, address }
     }
     pub fn void() -> Self {
         Self::Void

@@ -1,32 +1,39 @@
-use alloc::borrow::Cow;
-use alloc::borrow::ToOwned;
-use alloc::vec::Vec;
+use alloc::{
+    borrow::{Cow, ToOwned},
+    vec::Vec,
+};
 use core::cell::RefCell;
 
-use anyhow::Error;
-use anyhow::{anyhow, ensure};
+use anyhow::{
+    Error, {anyhow, ensure},
+};
 use hashbrown::HashMap;
 
 #[cfg(feature = "move_stdlib")]
 use {
-    diem_types::account_config,
-    diem_types::chain_id::ChainId,
+    diem_types::{account_config, chain_id::ChainId},
     move_core_types::value::{serialize_values, MoveValue},
 };
 
 use diem_types::on_chain_config::VMConfig;
-use move_core_types::account_address::AccountAddress;
-use move_core_types::gas_schedule::CostTable;
-use move_core_types::identifier::Identifier;
-use move_core_types::language_storage::{ModuleId, TypeTag, CORE_CODE_ADDRESS};
-use move_core_types::vm_status::StatusCode;
+use move_core_types::{
+    account_address::AccountAddress,
+    gas_schedule::CostTable,
+    identifier::Identifier,
+    language_storage::{ModuleId, TypeTag, CORE_CODE_ADDRESS},
+    vm_status::StatusCode,
+};
 
-use crate::gas_schedule::cost_table;
-use crate::io::balance::CurrencyInfo;
-use crate::io::traits::{Balance, BalanceAccess, CurrencyAccessPath, EventHandler, Storage};
-use crate::mvm::Mvm;
-use crate::types::{Gas, ModulePackage, PublishPackageTx};
-use crate::Vm;
+use crate::{
+    gas_schedule::cost_table,
+    io::{
+        balance::CurrencyInfo,
+        traits::{Balance, BalanceAccess, CurrencyAccessPath, EventHandler, Storage},
+    },
+    mvm::Mvm,
+    types::{Gas, ModulePackage, PublishPackageTx},
+    Vm,
+};
 
 pub fn init_storage<S>(storage: S, config: GenesisConfig) -> Result<(), Error>
 where

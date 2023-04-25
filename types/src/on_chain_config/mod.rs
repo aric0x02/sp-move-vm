@@ -5,8 +5,7 @@ use crate::{
     access_path::AccessPath, account_address::AccountAddress, account_config::CORE_CODE_ADDRESS,
     event::EventHandle,
 };
-use alloc::borrow::ToOwned;
-use alloc::sync::Arc;
+use alloc::{borrow::ToOwned, sync::Arc};
 use anyhow::{format_err, Result};
 use core::fmt;
 use hashbrown::HashMap;

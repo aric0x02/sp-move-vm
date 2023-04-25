@@ -1,20 +1,22 @@
 #[macro_use]
 extern crate alloc;
 
-use common::mock::Utils;
-use common::{assets::*, contains_core_module, mock::*, vm};
-use move_core_types::account_address::AccountAddress;
-use move_core_types::identifier::Identifier;
-use move_core_types::language_storage::{ModuleId, StructTag, TypeTag, CORE_CODE_ADDRESS};
-use move_core_types::resolver::{ModuleResolver, ResourceResolver};
-use move_core_types::vm_status::{AbortLocation, StatusCode, VMStatus};
-use mvm::io::balance::CurrencyInfo;
-use mvm::io::context::ExecutionContext;
-use mvm::io::state::State;
-use mvm::io::traits::BalanceAccess;
-use mvm::types::Gas;
-use mvm::types::Transaction;
-use mvm::Vm;
+use common::{
+    mock::Utils,
+    {assets::*, contains_core_module, mock::*, vm},
+};
+use move_core_types::{
+    account_address::AccountAddress,
+    identifier::Identifier,
+    language_storage::{ModuleId, StructTag, TypeTag, CORE_CODE_ADDRESS},
+    resolver::{ModuleResolver, ResourceResolver},
+    vm_status::{AbortLocation, StatusCode, VMStatus},
+};
+use mvm::{
+    io::{balance::CurrencyInfo, context::ExecutionContext, state::State, traits::BalanceAccess},
+    types::{Gas, Transaction},
+    Vm,
+};
 use std::convert::TryFrom;
 
 mod common;

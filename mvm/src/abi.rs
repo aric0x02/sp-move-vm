@@ -1,14 +1,13 @@
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
-use alloc::vec::Vec;
+use alloc::{borrow::ToOwned, boxed::Box, vec::Vec};
 use diem_types::account_address::AccountAddress;
-use move_binary_format::access::ModuleAccess;
-use move_binary_format::file_format::{
-    Ability, AbilitySet, SignatureToken, StructFieldInformation, StructHandleIndex, Visibility,
+use move_binary_format::{
+    access::ModuleAccess,
+    file_format::{
+        Ability, AbilitySet, SignatureToken, StructFieldInformation, StructHandleIndex, Visibility,
+    },
+    CompiledModule,
 };
-use move_binary_format::CompiledModule;
-use move_core_types::identifier::Identifier;
-use move_core_types::language_storage::ModuleId;
+use move_core_types::{identifier::Identifier, language_storage::ModuleId};
 use parity_scale_codec_derive::{Decode, Encode};
 use serde::{Deserialize, Serialize};
 

@@ -1,12 +1,10 @@
 #![allow(dead_code)]
 
 use diem_types::account_config::CORE_CODE_ADDRESS;
-use move_core_types::identifier::Identifier;
-use move_core_types::language_storage::ModuleId;
-use move_core_types::resolver::ModuleResolver;
-use mvm::genesis::init_storage;
-use mvm::io::state::State;
-use mvm::mvm::Mvm;
+use move_core_types::{
+    identifier::Identifier, language_storage::ModuleId, resolver::ModuleResolver,
+};
+use mvm::{genesis::init_storage, io::state::State, mvm::Mvm};
 
 use crate::common::mock::{BankMock, EventHandlerMock, StorageMock};
 

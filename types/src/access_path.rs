@@ -36,8 +36,7 @@
 //! `path` will be set to "/a" and use the `get_prefix()` method from statedb
 
 use crate::account_address::AccountAddress;
-use alloc::string::String;
-use alloc::vec::Vec;
+use alloc::{string::String, vec::Vec};
 use core::{convert::TryFrom, fmt};
 use diem_crypto::hash::HashValue;
 use move_core_types::language_storage::{ModuleId, ResourceKey, StructTag, CODE_TAG, RESOURCE_TAG};

@@ -3,34 +3,48 @@ use alloc::vec::Vec;
 use anyhow::{anyhow, Error};
 
 use diem_types::on_chain_config::VMConfig;
-use move_binary_format::errors::{Location, VMError, VMResult};
-use move_core_types::account_address::AccountAddress;
-use move_core_types::effects::{ChangeSet, Event};
-use move_core_types::gas_schedule::CostTable;
-use move_core_types::gas_schedule::InternalGasUnits;
-use move_core_types::gas_schedule::{AbstractMemorySize, GasAlgebra, GasUnits};
-use move_core_types::identifier::{IdentStr, Identifier};
-use move_core_types::language_storage::{ModuleId, StructTag, TypeTag, CORE_CODE_ADDRESS};
-use move_core_types::vm_status::{StatusCode, VMStatus};
-use move_vm_runtime::move_vm::MoveVM;
-use move_vm_runtime::session::Session;
+use move_binary_format::{
+    errors::{Location, VMError, VMResult},
+    CompiledModule,
+};
+use move_core_types::{
+    account_address::AccountAddress,
+    effects::{ChangeSet, Event},
+    gas_schedule::{
+        CostTable, InternalGasUnits, {AbstractMemorySize, GasAlgebra, GasUnits},
+    },
+    identifier::{IdentStr, Identifier},
+    language_storage::{ModuleId, StructTag, TypeTag, CORE_CODE_ADDRESS},
+    resolver::{ModuleResolver, ResourceResolver},
+    vm_status::{StatusCode, VMStatus},
+};
+use move_vm_runtime::{
+    move_vm::MoveVM,
+    native_functions::{NativeContextExtensions, NativeFunctionTable},
+    session::Session,
+};
+// use move_vm_runtime::session::Session;
 
 // use cell::{Lazy, OnceCell};
 // use core::marker::Sync;
-use crate::abi::ModuleAbi;
-use crate::gas_schedule::cost_table;
-use crate::io::balance::{BalanceOp, MasterOfCoin};
-use crate::io::context::ExecutionContext;
-use crate::io::key::AccessKey;
-use crate::io::state::{State, WriteEffects};
-use crate::io::traits::{BalanceAccess, EventHandler, Storage};
-use crate::types::{Call, Gas, ModuleTx, PublishPackageTx, ScriptTx, VmResult};
-use crate::{StateAccess, Vm};
-use move_binary_format::CompiledModule;
-use move_core_types::resolver::{ModuleResolver, ResourceResolver};
+use crate::{
+    abi::ModuleAbi,
+    gas_schedule::cost_table,
+    io::{
+        balance::{BalanceOp, MasterOfCoin},
+        context::ExecutionContext,
+        key::AccessKey,
+        state::{State, WriteEffects},
+        traits::{BalanceAccess, EventHandler, Storage},
+    },
+    types::{Call, Gas, ModuleTx, PublishPackageTx, ScriptTx, VmResult},
+    {StateAccess, Vm},
+};
+// use move_binary_format::CompiledModule;
+// use move_core_types::resolver::{ModuleResolver, ResourceResolver};
 use move_vm_types::gas_schedule::GasStatus;
 // use core::hash::Hash;
-use move_vm_runtime::native_functions::{NativeContextExtensions, NativeFunctionTable};
+// use move_vm_runtime::native_functions::{NativeContextExtensions, NativeFunctionTable};
 // use move_core_types::gas_schedule::{GasCarrier, GasCost};
 // use move_table_extension::{TableOperation,TableResolver,TableHandle};
 // use alloc::boxed::Box;
@@ -269,12 +283,14 @@ where
             GasStatus::new(&self.cost_table, GasUnits::new(gas.max_gas_amount()));
         // let mut session = self.vm.new_session(&self.state);
         let mut extensions = NativeContextExtensions::default();
-        let txn_hash: [u8; 32] = crate::io::session::SessionId::module_tx(module.clone(),sender.clone())
-            .as_uuid()
-            .to_vec()
-            .try_into()
-            .expect("HashValue should convert to [u8; 32]");
+        let txn_hash: [u8; 32] =
+            crate::io::session::SessionId::module_tx(module.clone(), sender.clone())
+                .as_uuid()
+                .to_vec()
+                .try_into()
+                .expect("HashValue should convert to [u8; 32]");
         let _txn_hash: u128 = txn_hash.iter().fold(0, |mut a, &b| {
+            a <<= 8;
             a += b as u128;
             a
         });
@@ -282,9 +298,7 @@ where
             _txn_hash,
             &self.state,
         ));
-        let mut session = self
-            .vm
-            .new_session_with_extensions(&self.state, extensions);
+        let mut session = self.vm.new_session_with_extensions(&self.state, extensions);
         let result = self
             ._publish_module(&mut session, vec![module], sender, &mut cost_strategy)
             .and_then(|_| session.finish().map(|(ws, e)| (ws, e, vec![])));
@@ -305,12 +319,14 @@ where
         // let mut session = self.vm.new_session(&self.state);
 
         let mut extensions = NativeContextExtensions::default();
-        let txn_hash: [u8; 32] = crate::io::session::SessionId::publish_package_tx(modules.clone(),sender.clone())
-            .as_uuid()
-            .to_vec()
-            .try_into()
-            .expect("HashValue should convert to [u8; 32]");
+        let txn_hash: [u8; 32] =
+            crate::io::session::SessionId::publish_package_tx(modules.clone(), sender.clone())
+                .as_uuid()
+                .to_vec()
+                .try_into()
+                .expect("HashValue should convert to [u8; 32]");
         let _txn_hash: u128 = txn_hash.iter().fold(0, |mut a, &b| {
+            a <<= 8;
             a += b as u128;
             a
         });
@@ -318,9 +334,7 @@ where
             _txn_hash,
             &self.state,
         ));
-        let mut session = self
-            .vm
-            .new_session_with_extensions(&self.state, extensions);
+        let mut session = self.vm.new_session_with_extensions(&self.state, extensions);
 
         let result = self
             ._publish_module(&mut session, modules, sender, &mut cost_strategy)
@@ -342,14 +356,20 @@ where
             .state
             .state_session(Some(context), &self.master_of_coin);
         // let mut vm_session = self.vm.new_session(&state_session);
-        
+
         let mut extensions = NativeContextExtensions::default();
-        let txn_hash: [u8; 32] = crate::io::session::SessionId::txn(bcs::to_bytes(&script).unwrap(),args.clone(),type_args.clone(),senders.clone())
-            .as_uuid()
-            .to_vec()
-            .try_into()
-            .expect("HashValue should convert to [u8; 32]");
+        let txn_hash: [u8; 32] = crate::io::session::SessionId::txn(
+            bcs::to_bytes(&script).unwrap(),
+            args.clone(),
+            type_args.clone(),
+            senders.clone(),
+        )
+        .as_uuid()
+        .to_vec()
+        .try_into()
+        .expect("HashValue should convert to [u8; 32]");
         let _txn_hash: u128 = txn_hash.iter().fold(0, |mut a, &b| {
+            a <<= 8;
             a += b as u128;
             a
         });

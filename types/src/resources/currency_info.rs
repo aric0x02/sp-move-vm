@@ -8,8 +8,7 @@ use crate::{
     },
     event::EventHandle,
 };
-use anyhow::anyhow;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use move_core_types::{
     ident_str,
     identifier::{IdentStr, Identifier},

@@ -1,28 +1,32 @@
-use alloc::borrow::Cow;
-use alloc::borrow::ToOwned;
-use alloc::collections::BTreeMap;
-use alloc::vec::Vec;
+use alloc::{
+    borrow::{Cow, ToOwned},
+    collections::BTreeMap,
+    vec::Vec,
+};
 use anyhow::Error;
 use cell::Lazy;
 use core::cell::RefCell;
-use diem_types::account_config;
-use diem_types::account_config::{ACCOUNT_MODULE_IDENTIFIER, CORE_CODE_ADDRESS};
-use diem_types::resources::currency_info::CurrencyInfoResource;
+use diem_types::{
+    account_config,
+    account_config::{ACCOUNT_MODULE_IDENTIFIER, CORE_CODE_ADDRESS},
+    resources::currency_info::CurrencyInfoResource,
+};
 use hashbrown::HashMap;
 use move_binary_format::errors::{Location, VMResult};
-use move_core_types::account_address::AccountAddress;
-use move_core_types::effects::ChangeSet;
-use move_core_types::ident_str;
-use move_core_types::identifier::{IdentStr, Identifier};
-use move_core_types::language_storage::{StructTag, TypeTag};
-use move_core_types::resolver::{ModuleResolver, ResourceResolver};
-use move_core_types::vm_status::StatusCode;
+use move_core_types::{
+    account_address::AccountAddress,
+    effects::ChangeSet,
+    ident_str,
+    identifier::{IdentStr, Identifier},
+    language_storage::{StructTag, TypeTag},
+    resolver::{ModuleResolver, ResourceResolver},
+    vm_status::{known_locations::DIEM_MODULE_IDENTIFIER, StatusCode},
+};
 use move_vm_types::natives::function::PartialVMError;
 use serde::{Deserialize, Serialize};
 use synctools::rwlock::RwLock;
 
 use crate::io::traits::{Balance, BalanceAccess, CurrencyAccessPath};
-use move_core_types::vm_status::known_locations::DIEM_MODULE_IDENTIFIER;
 
 pub const DIEM_COIN_IDENTIFIER: &IdentStr = ident_str!("Balance");
 pub const CURRENCY_INFO: &str = "TokenInfo";

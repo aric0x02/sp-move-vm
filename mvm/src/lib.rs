@@ -9,8 +9,10 @@ extern crate sp_io;
 #[allow(unused_imports)]
 use sp_io::EcdsaVerifyError;
 
-use crate::io::context::ExecutionContext;
-use crate::types::{Gas, ModuleTx, PublishPackageTx, ScriptTx, VmResult};
+use crate::{
+    io::context::ExecutionContext,
+    types::{Gas, ModuleTx, PublishPackageTx, ScriptTx, VmResult},
+};
 use alloc::vec::Vec;
 use anyhow::Error;
 use diem_types::account_address::AccountAddress;

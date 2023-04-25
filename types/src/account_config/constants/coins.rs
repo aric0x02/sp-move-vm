@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::account_config::constants::{from_currency_code_string, CORE_CODE_ADDRESS};
-use alloc::borrow::ToOwned;
-use alloc::string::{String, ToString};
+use alloc::{
+    borrow::ToOwned,
+    string::{String, ToString},
+};
 use cell::Lazy;
 use move_core_types::{
     ident_str,

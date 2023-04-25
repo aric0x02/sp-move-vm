@@ -3,9 +3,11 @@ use std::convert::TryFrom;
 use serde::Deserialize;
 
 use crate::common::mock::addr;
-use move_core_types::account_address::AccountAddress;
-use move_core_types::identifier::Identifier;
-use move_core_types::language_storage::{StructTag, TypeTag, CORE_CODE_ADDRESS};
+use move_core_types::{
+    account_address::AccountAddress,
+    identifier::Identifier,
+    language_storage::{StructTag, TypeTag, CORE_CODE_ADDRESS},
+};
 use mvm::io::traits::Balance;
 use mvm::types::{Gas, ModulePackage, ModuleTx, ScriptArg, ScriptTx};
 

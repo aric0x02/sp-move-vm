@@ -1,7 +1,6 @@
 use crate::io::balance::CurrencyInfo;
 use alloc::vec::Vec;
-use move_core_types::account_address::AccountAddress;
-use move_core_types::language_storage::TypeTag;
+use move_core_types::{account_address::AccountAddress, language_storage::TypeTag};
 
 pub trait EventHandler {
     fn on_event(&self, guid: Vec<u8>, seq_num: u64, ty_tag: TypeTag, message: Vec<u8>);

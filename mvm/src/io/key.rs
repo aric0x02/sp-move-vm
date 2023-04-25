@@ -1,8 +1,10 @@
 use alloc::vec::Vec;
 use core::convert::TryInto;
 use diem_types::access_path::AccessPath;
-use move_core_types::account_address::AccountAddress;
-use move_core_types::language_storage::{ModuleId, StructTag};
+use move_core_types::{
+    account_address::AccountAddress,
+    language_storage::{ModuleId, StructTag},
+};
 use move_table_extension::TableHandle;
 pub struct AccessKey(Vec<u8>);
 

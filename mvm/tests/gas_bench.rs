@@ -2,19 +2,24 @@ mod common;
 
 #[cfg(feature = "bench")]
 mod bench {
-    use crate::common::assets::{
-        empty_loop, math_loop, read_write_loop, store_module, vector_loop,
+    use crate::common::{
+        assets::{empty_loop, math_loop, read_write_loop, store_module, vector_loop},
+        mock::{
+            Utils, {BankMock, EventHandlerMock, StorageMock},
+        },
+        vm,
     };
-    use crate::common::mock::Utils;
-    use crate::common::mock::{BankMock, EventHandlerMock, StorageMock};
-    use crate::common::vm;
     use move_core_types::vm_status::StatusCode;
-    use mvm::io::context::ExecutionContext;
-    use mvm::mvm::Mvm;
-    use mvm::types::{Gas, ScriptTx};
-    use mvm::Vm;
-    use std::fmt::{Display, Formatter};
-    use std::time::Instant;
+    use mvm::{
+        io::context::ExecutionContext,
+        mvm::Mvm,
+        types::{Gas, ScriptTx},
+        Vm,
+    };
+    use std::{
+        fmt::{Display, Formatter},
+        time::Instant,
+    };
 
     #[test]
     fn gas_bench() {

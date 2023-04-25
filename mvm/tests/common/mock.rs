@@ -1,20 +1,21 @@
-use std::borrow::Cow;
-use std::cell::RefCell;
-use std::collections::HashMap;
-use std::rc::Rc;
+use std::{borrow::Cow, cell::RefCell, collections::HashMap, rc::Rc};
 
-use move_core_types::account_address::AccountAddress;
-use move_core_types::effects::Event;
-use move_core_types::language_storage::TypeTag;
-use move_core_types::vm_status::StatusCode;
-use mvm::io::traits::{Balance, BalanceAccess, CurrencyAccessPath, EventHandler, Storage};
-use mvm::mvm::Mvm;
-use mvm::types::{ModuleTx, ScriptTx};
-use mvm::Vm;
+use move_core_types::{
+    account_address::AccountAddress, effects::Event, language_storage::TypeTag,
+    vm_status::StatusCode,
+};
+use mvm::{
+    io::{
+        balance::CurrencyInfo,
+        context::ExecutionContext,
+        traits::{Balance, BalanceAccess, CurrencyAccessPath, EventHandler, Storage},
+    },
+    mvm::Mvm,
+    types::{ModuleTx, ScriptTx},
+    Vm,
+};
 
 use crate::common::assets::gas;
-use mvm::io::balance::CurrencyInfo;
-use mvm::io::context::ExecutionContext;
 
 #[derive(Clone, Debug)]
 pub struct StorageMock {

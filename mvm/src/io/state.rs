@@ -1,14 +1,15 @@
-use crate::io::balance::MasterOfCoin;
-use crate::io::context::ExecutionContext;
-use crate::io::key::AccessKey;
-use crate::io::session::StateSession;
 pub use crate::io::traits::{BalanceAccess, Storage};
+use crate::io::{
+    balance::MasterOfCoin, context::ExecutionContext, key::AccessKey, session::StateSession,
+};
 use alloc::vec::Vec;
 use anyhow::Error;
-use move_core_types::account_address::AccountAddress;
-use move_core_types::gas_schedule::{GasCarrier, GasCost, InternalGasUnits};
-use move_core_types::language_storage::{ModuleId, StructTag};
-use move_core_types::resolver::{ModuleResolver, ResourceResolver};
+use move_core_types::{
+    account_address::AccountAddress,
+    gas_schedule::{GasCarrier, GasCost, InternalGasUnits},
+    language_storage::{ModuleId, StructTag},
+    resolver::{ModuleResolver, ResourceResolver},
+};
 use move_table_extension::{TableHandle, TableOperation, TableResolver};
 
 pub struct State<S: Storage> {

@@ -1,21 +1,17 @@
-use alloc::string::String;
-use alloc::vec::Vec;
-use core::convert::TryFrom;
-use core::fmt;
+use alloc::{string::String, vec::Vec};
+use core::{convert::TryFrom, fmt};
 
 use anyhow::*;
 use parity_scale_codec_derive::{Decode, Encode};
 use serde::{Deserialize, Serialize};
 
-use move_core_types::account_address::AccountAddress;
-use move_core_types::language_storage::TypeTag;
-use move_core_types::value::MoveValue;
-use move_core_types::vm_status::StatusCode;
-
 use crate::error::SubStatus;
 use diem_types::account_config::diem_root_address;
 use move_binary_format::errors::Location;
-use move_core_types::identifier::Identifier;
+use move_core_types::{
+    account_address::AccountAddress, identifier::Identifier, language_storage::TypeTag,
+    value::MoveValue, vm_status::StatusCode,
+};
 
 const GAS_AMOUNT_MAX_VALUE: u64 = u64::MAX / 1000;
 
