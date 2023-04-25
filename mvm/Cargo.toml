@@ -20,6 +20,7 @@ move-vm-types = { path = "../language/move-vm/types", default-features = false }
 move-core-types = { path = "../language/move-core/types", default-features = false }
 move-binary-format = { path = "../language/move-binary-format", default-features = false }
 diem-crypto = { path = "../crates/diem-crypto", default-features = false }
+diem-crypto-derive = { path = "../crates/diem-crypto-derive", version = "0.0.2", default-features = false  }
 bcs = { path = "../bcs", default-features = false }
 stdlib = { path = "../stdlib", default-features = false, optional = true }
 log = { version = "0.4.14", default-features = false }

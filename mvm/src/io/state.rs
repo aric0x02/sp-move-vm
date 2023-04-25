@@ -27,18 +27,6 @@ impl<S: Storage> State<S> {
     ) -> StateSession<'c, '_, State<S>, B> {
         StateSession::new(self, context, master_of_coin.session(self))
     }
-    //     pub fn static_state_session<'c, B: BalanceAccess>(
-    //         &self,
-    //         context: Option<ExecutionContext>,
-    //         master_of_coin: &'c MasterOfCoin<B>,
-    //     ) -> &'static StateSession<'c, '_, State<S>, B> {
-    // use cell::{Lazy, OnceCell};
-    //         static static_state_session: OnceCell<StateSession<'b,'r,State<dyn Storage>,dyn BalanceAccess>> = OnceCell::new();
-
-    //         static_state_session.set(StateSession::new(self, context, master_of_coin.session(self)));
-    //         static_state_session.get().unwrap()
-    //         // &StateSession::new(self, context, master_of_coin.session(self))
-    //     }
 }
 
 impl<S: Storage> ModuleResolver for State<S> {

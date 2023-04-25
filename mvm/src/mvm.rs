@@ -267,8 +267,24 @@ where
         let (module, sender) = module.into_inner();
         let mut cost_strategy =
             GasStatus::new(&self.cost_table, GasUnits::new(gas.max_gas_amount()));
-        let mut session = self.vm.new_session(&self.state);
-
+        // let mut session = self.vm.new_session(&self.state);
+        let mut extensions = NativeContextExtensions::default();
+        let txn_hash: [u8; 32] = crate::io::session::SessionId::module_tx(module.clone(),sender.clone())
+            .as_uuid()
+            .to_vec()
+            .try_into()
+            .expect("HashValue should convert to [u8; 32]");
+        let _txn_hash: u128 = txn_hash.iter().fold(0, |mut a, &b| {
+            a += b as u128;
+            a
+        });
+        extensions.add(move_table_extension::NativeTableContext::new(
+            _txn_hash,
+            &self.state,
+        ));
+        let mut session = self
+            .vm
+            .new_session_with_extensions(&self.state, extensions);
         let result = self
             ._publish_module(&mut session, vec![module], sender, &mut cost_strategy)
             .and_then(|_| session.finish().map(|(ws, e)| (ws, e, vec![])));
@@ -286,7 +302,26 @@ where
         let mut cost_strategy =
             GasStatus::new(&self.cost_table, GasUnits::new(gas.max_gas_amount()));
 
-        let mut session = self.vm.new_session(&self.state);
+        // let mut session = self.vm.new_session(&self.state);
+
+        let mut extensions = NativeContextExtensions::default();
+        let txn_hash: [u8; 32] = crate::io::session::SessionId::publish_package_tx(modules.clone(),sender.clone())
+            .as_uuid()
+            .to_vec()
+            .try_into()
+            .expect("HashValue should convert to [u8; 32]");
+        let _txn_hash: u128 = txn_hash.iter().fold(0, |mut a, &b| {
+            a += b as u128;
+            a
+        });
+        extensions.add(move_table_extension::NativeTableContext::new(
+            _txn_hash,
+            &self.state,
+        ));
+        let mut session = self
+            .vm
+            .new_session_with_extensions(&self.state, extensions);
+
         let result = self
             ._publish_module(&mut session, modules, sender, &mut cost_strategy)
             .and_then(|_| session.finish().map(|(ws, e)| (ws, e, vec![])));
@@ -301,12 +336,20 @@ where
         tx: ScriptTx,
         dry_run: bool,
     ) -> VmResult {
+        let (script, args, type_args, senders) = tx.into_inner();
+
         let state_session = self
             .state
             .state_session(Some(context), &self.master_of_coin);
         // let mut vm_session = self.vm.new_session(&state_session);
+        
         let mut extensions = NativeContextExtensions::default();
-        let _txn_hash: u128 = [0].iter().fold(0, |mut a, &b| {
+        let txn_hash: [u8; 32] = crate::io::session::SessionId::txn(bcs::to_bytes(&script).unwrap(),args.clone(),type_args.clone(),senders.clone())
+            .as_uuid()
+            .to_vec()
+            .try_into()
+            .expect("HashValue should convert to [u8; 32]");
+        let _txn_hash: u128 = txn_hash.iter().fold(0, |mut a, &b| {
             a += b as u128;
             a
         });
@@ -318,7 +361,6 @@ where
             .vm
             .new_session_with_extensions(&state_session, extensions);
 
-        let (script, args, type_args, senders) = tx.into_inner();
         let sender = senders.get(0).cloned().unwrap_or(AccountAddress::ZERO);
 
         let mut cost_strategy =
