@@ -11,12 +11,13 @@ use move_binary_format::{
     file_format::{Ability, AbilitySet},
     CompiledModule,
 };
+use move_bytecode_utils::layout::TypeLayoutBuilder;
 use move_core_types::{
     account_address::AccountAddress,
     identifier::{IdentStr, Identifier},
     language_storage::{ModuleId, StructTag, TypeTag},
     resolver::MoveResolver,
-    value::{MoveStruct, MoveValue},
+    value::{MoveStruct, MoveTypeLayout, MoveValue},
     vm_status::VMStatus,
 };
 use serde::ser::{SerializeMap, SerializeSeq};
@@ -85,7 +86,19 @@ impl<'a, T: MoveResolver + ?Sized> MoveValueAnnotator<'a, T> {
     }
 
     pub fn get_module(&self, module: &ModuleId) -> Result<Rc<CompiledModule>> {
-        self.cache.get_module_by_id(module)
+        self.cache.get_module_by_id_or_err(module)
+    }
+
+    pub fn get_type_layout_runtime(&self, type_tag: &TypeTag) -> Result<MoveTypeLayout> {
+        TypeLayoutBuilder::build_runtime(type_tag, &self.cache)
+    }
+
+    pub fn get_type_layout_with_fields(&self, type_tag: &TypeTag) -> Result<MoveTypeLayout> {
+        TypeLayoutBuilder::build_with_fields(type_tag, &self.cache)
+    }
+
+    pub fn get_type_layout_with_types(&self, type_tag: &TypeTag) -> Result<MoveTypeLayout> {
+        TypeLayoutBuilder::build_with_types(type_tag, &self.cache)
     }
 
     pub fn view_function_arguments(
@@ -134,18 +147,26 @@ impl<'a, T: MoveResolver + ?Sized> MoveValueAnnotator<'a, T> {
                 .into_iter()
                 .zip(runtime.into_iter())
                 .collect(),
-            MoveStruct::WithFields(fields) => fields,
+            MoveStruct::WithFields(fields) | MoveStruct::WithTypes { fields, .. } => fields,
         })
     }
 
     pub fn view_value(&self, ty_tag: &TypeTag, blob: &[u8]) -> Result<AnnotatedMoveValue> {
+ log::warn!("Failed view_value to {:?} key_bytes:{:?}",ty_tag, blob);
         let ty = self.cache.resolve_type(ty_tag)?;
+ log::warn!("Failed after view_value to {:?} key_bytes:{:?}",ty_tag, blob);
         self.view_value_by_fat_type(&ty, blob)
     }
 
     fn view_value_by_fat_type(&self, ty: &FatType, blob: &[u8]) -> Result<AnnotatedMoveValue> {
+ log::warn!("Failed 162 view_value to {:?} key_bytes:{:?}",ty, blob);
+
         let layout = ty.try_into().map_err(into_vm_status)?;
+ log::warn!("Failed 165 view_value to {:?} key_bytes:{:?}",ty, blob);
+
         let move_value = MoveValue::simple_deserialize(blob, &layout)?;
+ log::warn!("Failed 168 view_value to {:?} key_bytes:{:?}",ty, blob);
+
         self.annotate_value(&move_value, ty)
     }
 
@@ -173,6 +194,7 @@ impl<'a, T: MoveResolver + ?Sized> MoveValueAnnotator<'a, T> {
     }
 
     fn annotate_value(&self, value: &MoveValue, ty: &FatType) -> Result<AnnotatedMoveValue> {
+ log::warn!("Failed 197 annotate_value to {:?} key_bytes:{:?}",ty, value);
         Ok(match (value, ty) {
             (MoveValue::Bool(b), FatType::Bool) => AnnotatedMoveValue::Bool(*b),
             (MoveValue::U8(i), FatType::U8) => AnnotatedMoveValue::U8(*i),

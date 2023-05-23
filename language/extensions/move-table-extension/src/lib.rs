@@ -313,9 +313,11 @@ impl Table {
         key: &Value,
     ) -> PartialVMResult<(Option<&mut GlobalValue>, usize, usize)> {
         let key_bytes = serialize(&self.key_layout, key)?;
+        log::warn!("Failed to {:?} key_bytes:{:?}",self.handle, key_bytes);
         let key_size = key_bytes.len();
         let mut val_size = 0;
         if !self.content.contains_key(&key_bytes) {
+        log::warn!("2222222Failed to {:?} key_bytes:{:?}",self.handle, key_bytes);
             // Try to retrieve a value from the remote resolver.
             match context
                 .resolver
@@ -326,6 +328,7 @@ impl Table {
                 Some(val_bytes) => {
                     val_size = val_bytes.len();
                     let val = deserialize(&self.value_layout, &val_bytes)?;
+                    log::warn!("Failed to 33333==========={:?} key_bytes:{:?}",self.handle, key_bytes);
                     self.content
                         .entry(key_bytes.clone())
                         .or_insert(GlobalValue::cached(val)?);

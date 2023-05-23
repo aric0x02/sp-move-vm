@@ -412,7 +412,7 @@ dependencies = [
  "invalid-mutations",
  "move-binary-format",
  "move-core-types",
- "petgraph",
+ "petgraph 0.5.1",
  "proptest",
 ]
 
@@ -1048,6 +1048,12 @@ name = "fixedbitset"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "45e780567ed7abc415d12fd464571d265eb4a5710ddc97cdb1a31a4c35bb479d"
+
+[[package]]
+name = "fixedbitset"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
 
 [[package]]
 name = "fnv"
@@ -1713,6 +1719,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "move-bytecode-utils"
+version = "0.1.0"
+dependencies = [
+ "alt_serde",
+ "anyhow",
+ "move-binary-format",
+ "move-core-types",
+ "petgraph 0.6.3",
+ "serde-reflection",
+]
+
+[[package]]
 name = "move-core-types"
 version = "0.1.0"
 dependencies = [
@@ -1743,6 +1761,7 @@ dependencies = [
  "cell",
  "hex",
  "move-binary-format",
+ "move-bytecode-utils",
  "move-core-types",
  "move-vm-types",
 ]
@@ -2091,6 +2110,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "467d164a6de56270bd7c4d070df81d07beace25012d5103ced4e9ff08d6afdb7"
 dependencies = [
  "fixedbitset 0.2.0",
+ "indexmap 1.9.2",
+]
+
+[[package]]
+name = "petgraph"
+version = "0.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4dd7d28ee937e54fe3080c91faa1c3a46c06de6252988a7f4592ba2310ef22a4"
+dependencies = [
+ "fixedbitset 0.4.2",
  "indexmap 1.9.2",
 ]
 
@@ -2631,6 +2660,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb7d1f0d3021d347a83e556fc4683dea2ea09d87bccdf88ff5c12545d89d5efb"
 dependencies = [
  "serde_derive",
+]
+
+[[package]]
+name = "serde-reflection"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f05a5f801ac62a51a49d378fdb3884480041b99aced450b28990673e8ff99895"
+dependencies = [
+ "once_cell",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]

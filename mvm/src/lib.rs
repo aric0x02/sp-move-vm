@@ -16,7 +16,6 @@ use crate::{
 use alloc::vec::Vec;
 use anyhow::Error;
 use diem_types::account_address::AccountAddress;
-
 pub mod abi;
 pub mod error;
 pub mod gas_schedule;
@@ -56,4 +55,6 @@ pub trait StateAccess {
     fn get_module_abi(&self, module_id: &[u8]) -> Result<Option<Vec<u8>>, Error>;
     /// Return resource by its account address and  struct tag. `tag` is StructTag encoded by bcs.
     fn get_resource(&self, address: &AccountAddress, tag: &[u8]) -> Result<Option<Vec<u8>>, Error>;
+    /// Return table entry by its table handle and key. `key` is Move Value encoded by bcs.
+    fn get_table_entry(&self,handle: u128, key: &[u8]) -> Result<Option<Vec<u8>>, Error> ;
 }

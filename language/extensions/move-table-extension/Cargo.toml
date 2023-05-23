@@ -23,7 +23,7 @@ move-vm-runtime = { path = "../../move-vm/runtime" , default-features = false}
 move-binary-format = { path = "../../move-binary-format" , default-features = false}
 better_any ={path = "../../../better_any/better_any", default-features = false}
 better_typeid_derive ={path = "../../../better_any/better_typeid_derive", default-features = false}
-
+log = { version = "0.4.14", default-features = false }
 [dev-dependencies]
 move-stdlib = { path = "../../move-stdlib" }
 # tempfile = "3.2.0"

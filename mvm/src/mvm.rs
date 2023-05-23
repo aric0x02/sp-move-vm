@@ -46,7 +46,7 @@ use move_vm_types::gas_schedule::GasStatus;
 // use core::hash::Hash;
 // use move_vm_runtime::native_functions::{NativeContextExtensions, NativeFunctionTable};
 // use move_core_types::gas_schedule::{GasCarrier, GasCost};
-// use move_table_extension::{TableOperation,TableResolver,TableHandle};
+use move_table_extension::{TableResolver,TableHandle,TableChangeSet};//TableOperation,
 // use alloc::boxed::Box;
 
 // static static_state: OnceCell<State<(dyn Storage +Sync+ 'static)>> = OnceCell::new();
@@ -131,6 +131,28 @@ where
     }
 
     /// Stores write set into storage and handle events.
+    fn handle_tx_effects_with_extensions(
+        &self,
+        tx_effects: (ChangeSet, Vec<Event>, Vec<BalanceOp>,TableChangeSet),
+    ) -> Result<(), VMError> {
+        let (change_set, events, balance_op,table_change_set) = tx_effects;
+        self.handle_tx_effects((change_set, events, balance_op))?;
+        for (handle, change) in table_change_set.changes {
+            for (key, value_op) in change.entries {
+                let state_key = AccessKey::from((&handle, &key[..]));
+                match value_op {
+                    None => {
+                        self.state.delete(state_key);
+                    }
+                    Some(blob) => {
+                        self.state.insert(state_key, blob);
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+    /// Stores write set into storage and handle events.
     fn handle_tx_effects(
         &self,
         tx_effects: (ChangeSet, Vec<Event>, Vec<BalanceOp>),
@@ -173,6 +195,44 @@ where
         Ok(())
     }
 
+    /// Handle vm result and return transaction status code.    
+    fn handle_vm_result_with_extensions(
+        &self,
+        sender: AccountAddress,
+        cost_strategy: GasStatus,
+        gas_meta: Gas,
+        result: Result<(ChangeSet, Vec<Event>, Vec<BalanceOp>,TableChangeSet), VMError>,
+        dry_run: bool,
+    ) -> VmResult{
+         let gas_used = GasUnits::new(gas_meta.max_gas_amount)
+            .sub(cost_strategy.remaining_gas())
+            .get();
+
+        if dry_run {
+            return match result {
+                Ok(_) => VmResult::new(StatusCode::EXECUTED, None, None, gas_used),
+                Err(err) => VmResult::new(
+                    err.major_status(),
+                    err.sub_status(),
+                    Some(err.location().clone()),
+                    gas_used,
+                ),
+            };
+        }
+
+        match result.and_then(|e| self.handle_tx_effects_with_extensions(e)) {
+            Ok(_) => VmResult::new(StatusCode::EXECUTED, None, None, gas_used),
+            Err(err) => {
+                let status = err.major_status();
+                let sub_status = err.sub_status();
+                let loc = err.location().clone();
+                if let Err(err) = self.emit_vm_status_event(sender, err.into_vm_status()) {
+                    log::warn!("Failed to emit vm status event:{:?}", err);
+                }
+                VmResult::new(status, sub_status, Some(loc), gas_used)
+            }
+        }
+    }
     /// Handle vm result and return transaction status code.
     fn handle_vm_result(
         &self,
@@ -408,12 +468,11 @@ where
             .and_then(|_| {
                 Self::charge_global_write_gas_usage(&mut cost_strategy, &mut vm_session, &sender)
             })
-            .and_then(|_| vm_session.finish())
-            .and_then(|vm_effects| state_session.finish(vm_effects));
+            .and_then(|_| vm_session.finish_with_extensions())
+            .and_then(|vm_effects| state_session.finish_with_extensions(vm_effects));
 
-        self.handle_vm_result(sender, cost_strategy, gas, exec_result, dry_run)
+        self.handle_vm_result_with_extensions(sender, cost_strategy, gas, exec_result, dry_run)
     }
-
     fn clear(&self) {
         self.vm.clear();
         self.master_of_coin.clear();
@@ -449,5 +508,10 @@ where
 
         let state_session = self.state.state_session(None, &self.master_of_coin);
         state_session.get_resource(address, &tag)
+    }
+    fn get_table_entry(&self,handle: u128, key: &[u8]) -> Result<Option<Vec<u8>>, Error> {
+        log::warn!("Failed to key================:{:?}", key);
+        let state_session = self.state.state_session(None, &self.master_of_coin);
+        state_session.resolve_table_entry(&TableHandle(handle), key)
     }
 }
