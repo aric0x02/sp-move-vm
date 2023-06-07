@@ -1,7 +1,12 @@
 // Copyright (c) The Diem Core Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{account_address::AccountAddress, identifier::Identifier,language_storage::{StructTag, TypeTag}};
+use crate::alloc::string::ToString;
+use crate::{
+    account_address::AccountAddress,
+    identifier::Identifier,
+    language_storage::{StructTag, TypeTag},
+};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use anyhow::{bail, Error, Result as AResult};
@@ -11,7 +16,6 @@ use serde::{
     ser::{SerializeMap, SerializeSeq, SerializeStruct, SerializeTuple},
     Deserialize, Serialize,
 };
-use crate::alloc::string::ToString;
 /// In the `WithTypes` configuration, a Move struct gets serialized into a Serde struct with this name
 pub const MOVE_STRUCT_NAME: &str = "struct";
 

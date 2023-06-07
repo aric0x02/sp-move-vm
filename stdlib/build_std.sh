@@ -2,7 +2,7 @@
  function lockfile_waithold()
  {
     declare -ir time_beg=$(date '+%s')
-    declare -ir time_max=7 #7140 s = 1 hour 59 min.
+    declare -ir time_max=7 #7140 s = 1 hour 59 min. possible stuck at build time
 
     while ! \
        (set -o noclobber ; \
@@ -26,18 +26,18 @@
 
 lockfile_waithold
 
-# rm -rf pont-stdlib
-# git clone -b release-v1.0.0 --single-branch https://github.com/pontem-network/pont-stdlib.git
+rm -rf pont-stdlib
+git clone -b release-v1.0.1 --single-branch https://github.com/aric0x02/pont-stdlib.git
 cd pont-stdlib
-# git reset --hard release-v1.0.0
+# git reset --hard release-v1.0.1
 dove build
 dove deploy
 cd ..
 
-# rm -rf move-stdlib
-# git clone -b release-v1.0.0 --single-branch https://github.com/pontem-network/move-stdlib.git
+rm -rf move-stdlib
+git clone -b release-v1.0.1 --single-branch https://github.com/aric0x02/move-stdlib.git
 cd move-stdlib
-# git reset --hard release-v1.0.0
+# git reset --hard release-v1.0.1
 dove build
 dove deploy
 

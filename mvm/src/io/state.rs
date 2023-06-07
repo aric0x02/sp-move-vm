@@ -56,7 +56,6 @@ impl<S: Storage> TableResolver for State<S> {
         handle: &TableHandle,
         key: &[u8],
     ) -> Result<Option<Vec<u8>>, anyhow::Error> {
-        log::warn!("Failed to key=====state===={:?}===={:?}===:{:?}",handle,key, self.store.get(AccessKey::from((handle, key)).as_ref()));
         Ok(self.store.get(AccessKey::from((handle, key)).as_ref()))
     }
     fn table_size(&self, _handle: &TableHandle) -> Result<usize, anyhow::Error> {

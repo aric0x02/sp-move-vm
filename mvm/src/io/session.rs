@@ -6,7 +6,7 @@ use crate::io::{
 use alloc::vec::Vec;
 use anyhow::Error;
 use diem_types::account_config;
-use move_binary_format::errors::{Location,VMResult};
+use move_binary_format::errors::{Location, VMResult};
 use move_core_types::{
     account_address::AccountAddress,
     effects::{ChangeSet, Event},
@@ -14,8 +14,10 @@ use move_core_types::{
     language_storage::{ModuleId, StructTag, TypeTag, CORE_CODE_ADDRESS},
     resolver::{ModuleResolver, ResourceResolver},
 };
+use move_table_extension::{
+    NativeTableContext, TableChangeSet, TableHandle, TableOperation, TableResolver,
+};
 use move_vm_runtime::native_functions::NativeContextExtensions;
-use move_table_extension::{TableHandle, TableOperation, TableResolver,TableChangeSet,NativeTableContext};
 // use move_vm_runtime::native_functions::NativeContextExtensions;
 // use crate::types::{Call, Gas, ModuleTx, PublishPackageTx, ScriptTx};
 use diem_crypto::{hash::CryptoHash, HashValue};
@@ -111,8 +113,8 @@ impl<
     }
     pub fn finish_with_extensions(
         &self,
-        (mut changes, events,mut extensions): (ChangeSet, Vec<Event>,NativeContextExtensions),
-    ) -> VMResult<(ChangeSet, Vec<Event>, Vec<BalanceOp>,TableChangeSet)> {
+        (mut changes, events, mut extensions): (ChangeSet, Vec<Event>, NativeContextExtensions),
+    ) -> VMResult<(ChangeSet, Vec<Event>, Vec<BalanceOp>, TableChangeSet)> {
         // let (_, _, mut extensions) = self.inner.finish_with_extensions()?;
         let table_context: NativeTableContext = extensions.remove();
         let table_change_set = table_context
@@ -120,7 +122,7 @@ impl<
             .map_err(|e| e.finish(Location::Undefined))?;
         let balance_op = self.coin_session.finish(&mut changes)?;
 
-        Ok((changes, events, balance_op,table_change_set))
+        Ok((changes, events, balance_op, table_change_set))
     }
 }
 

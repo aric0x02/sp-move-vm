@@ -56,5 +56,5 @@ pub trait StateAccess {
     /// Return resource by its account address and  struct tag. `tag` is StructTag encoded by bcs.
     fn get_resource(&self, address: &AccountAddress, tag: &[u8]) -> Result<Option<Vec<u8>>, Error>;
     /// Return table entry by its table handle and key. `key` is Move Value encoded by bcs.
-    fn get_table_entry(&self,handle: u128, key: &[u8]) -> Result<Option<Vec<u8>>, Error> ;
+    fn get_table_entry(&self, handle: u128, key: &[u8]) -> Result<Option<Vec<u8>>, Error>;
 }

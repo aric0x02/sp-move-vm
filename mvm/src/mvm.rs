@@ -46,8 +46,8 @@ use move_vm_types::gas_schedule::GasStatus;
 // use core::hash::Hash;
 // use move_vm_runtime::native_functions::{NativeContextExtensions, NativeFunctionTable};
 // use move_core_types::gas_schedule::{GasCarrier, GasCost};
-use move_table_extension::{TableResolver,TableHandle,TableChangeSet};//TableOperation,
-// use alloc::boxed::Box;
+use move_table_extension::{TableChangeSet, TableHandle, TableResolver}; //TableOperation,
+                                                                        // use alloc::boxed::Box;
 
 // static static_state: OnceCell<State<(dyn Storage +Sync+ 'static)>> = OnceCell::new();
 pub fn pont_natives(move_std_addr: AccountAddress) -> NativeFunctionTable {
@@ -133,9 +133,9 @@ where
     /// Stores write set into storage and handle events.
     fn handle_tx_effects_with_extensions(
         &self,
-        tx_effects: (ChangeSet, Vec<Event>, Vec<BalanceOp>,TableChangeSet),
+        tx_effects: (ChangeSet, Vec<Event>, Vec<BalanceOp>, TableChangeSet),
     ) -> Result<(), VMError> {
-        let (change_set, events, balance_op,table_change_set) = tx_effects;
+        let (change_set, events, balance_op, table_change_set) = tx_effects;
         self.handle_tx_effects((change_set, events, balance_op))?;
         for (handle, change) in table_change_set.changes {
             for (key, value_op) in change.entries {
@@ -201,10 +201,10 @@ where
         sender: AccountAddress,
         cost_strategy: GasStatus,
         gas_meta: Gas,
-        result: Result<(ChangeSet, Vec<Event>, Vec<BalanceOp>,TableChangeSet), VMError>,
+        result: Result<(ChangeSet, Vec<Event>, Vec<BalanceOp>, TableChangeSet), VMError>,
         dry_run: bool,
-    ) -> VmResult{
-         let gas_used = GasUnits::new(gas_meta.max_gas_amount)
+    ) -> VmResult {
+        let gas_used = GasUnits::new(gas_meta.max_gas_amount)
             .sub(cost_strategy.remaining_gas())
             .get();
 
@@ -509,8 +509,7 @@ where
         let state_session = self.state.state_session(None, &self.master_of_coin);
         state_session.get_resource(address, &tag)
     }
-    fn get_table_entry(&self,handle: u128, key: &[u8]) -> Result<Option<Vec<u8>>, Error> {
-        log::warn!("Failed to key================:{:?}", key);
+    fn get_table_entry(&self, handle: u128, key: &[u8]) -> Result<Option<Vec<u8>>, Error> {
         let state_session = self.state.state_session(None, &self.master_of_coin);
         state_session.resolve_table_entry(&TableHandle(handle), key)
     }

@@ -19,6 +19,8 @@ members = [
     "language/extensions/move-table-extension",
     "mvm",
     "bcs",
+    "better_any/better_any",
+    "better_any/better_typeid_derive",
     "mirai-annotations",
     "crates/nibble",
     "crates/diem-proptest-helpers",
